@@ -150,13 +150,37 @@ def Ia_turn():
     block_ia()
 
 
-def check_winner():
-    global WINNER_GAME
+def check_winner(PLAYER_TYPE):
+    pl_pos = np.array(np.where(board == PLAYER_TYPE)).reshape((2, 1))
+    pl_pos = [pl_pos[1][0] , pl_pos[0][0] ]
+    x=pl_pos[0]
+    y=pl_pos[1]
+    # ia_position = [x,y]
+    loose_sum=0
+    if(x==0 and y==0):
+        return ( board[y+1][x]+ board[y+1][x+1]+ board[y][x+1]  )==-3
+    elif (x == 6 and y == 0):
+        return ( board[y+1][x]+ board[y+1][x+1]+ board[y][x+1]  )==-3
+    elif (x == 0 and y == 6):
+        return ( board[y-1][x]+board[y-1][x+1] + board[y][x+1]  )==-3
+    elif (x == 6 and y == 6):
+        return ( board[y-1][x-1]+board[y-1][x]+ + board[y][x-1] )==-3
+    elif (x == 0):
+        return ( board[y-1][x]+board[y-1][x+1] + board[y][x+1] + board[y+1][x]+ board[y+1][x+1] )==-5
+    elif (x == 6):
+        return ( board[y-1][x-1]+board[y-1][x] + board[y][x-1] + board[y+1][x-1]+ board[y+1][x] )==-5
+    elif (y == 0):
+        return ( board[y][x-1]+board[y][x+1] + board[y+1][x-1]+ board[y+1][x]+ board[y+1][x+1] )==-5
+    elif (y == 6):
+        return ( board[y-1][x-1]+board[y-1][x]+board[y-1][x+1] + board[y][x-1]+board[y][x+1]  )==-5
+    else:
+        return ( board[y-1][x-1]+board[y-1][x]+board[y-1][x+1] +
+                 board[y][x-1]+board[y][x+1] +
+                 board[y+1][x-1]+ board[y+1][x]+ board[y+1][x+1] )==-8
 
-    return True
 
 def isola_game():
-    global board
+    global board,WINNER_GAME
     while(True):
         ## D'abord je montre le plateau
         show_board()
@@ -164,12 +188,14 @@ def isola_game():
         Player_turn()
         # Ensuite une évaluation des condition de réussite sont faite
 
-        if(check_winner()):
+        if(check_winner(IA_CASE)):
+            WINNER_GAME=JOUEUR_CASE
             break
         # Ensuite le joueur IA doit choisir les cases et poser le mur
         Ia_turn()
         # Ensuite une évaluation des condition de réussite sont faite
-        if(check_winner()):
+        if(check_winner(JOUEUR_CASE)):
+            WINNER_GAME=IA_CASE
             break
 
 #show_board()
