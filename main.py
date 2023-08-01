@@ -1,7 +1,6 @@
 import numpy as np
 from tkinter import *
 from random import randrange
-
 """
 Le déroulement du jeu se passe ainsi :
     - D'abord le joueur bouge et pose un block
@@ -58,7 +57,7 @@ def move_player():
         player_pos = np.array(np.where(board == JOUEUR_CASE)).reshape((2, 1))
         player_pos=[player_pos[0][0]+1,player_pos[1][0]+1]
         print("Votre position actuelle ({1},{0})".format(player_pos[0],player_pos[1]))
-        move_choose = str(input("choix y,x --> "))
+        move_choose = str(input("choix x,y --> "))
         coord = list(move_choose.split(','))
         # pour la position on doit :
         # - verifier si entier
@@ -109,7 +108,7 @@ def block_player():
         player_pos = np.array(np.where(board == JOUEUR_CASE)).reshape((2, 1))
         player_pos=[player_pos[0][0]+1,player_pos[1][0]+1]
         print("Votre position actuelle ({1},{0})".format(player_pos[0],player_pos[1]))
-        move_choose = str(input("choix y,x --> "))
+        move_choose = str(input("choix x,y --> "))
         coord = list(move_choose.split(','))
         # pour la position on doit :
         # - verifier si entier
@@ -189,12 +188,16 @@ def isola_game():
         # Ensuite une évaluation des condition de réussite sont faite
 
         if(check_winner(IA_CASE)):
+            print("\n"*10)
+            print("Bien joué, tu as gagné contre l'IA")
             WINNER_GAME=JOUEUR_CASE
             break
         # Ensuite le joueur IA doit choisir les cases et poser le mur
         Ia_turn()
         # Ensuite une évaluation des condition de réussite sont faite
         if(check_winner(JOUEUR_CASE)):
+            print("\n"*10)
+            print("Tu as perdu contre l'IA")
             WINNER_GAME=IA_CASE
             break
 
