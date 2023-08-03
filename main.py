@@ -141,6 +141,15 @@ def Player_turn():
     block_player()
 
 
+
+def heurestic_value():
+    pass
+
+def minmax_algo():
+    pass
+
+
+
 #A faire
 def move_ia():
     return
