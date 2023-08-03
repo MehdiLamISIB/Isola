@@ -140,10 +140,14 @@ def Player_turn():
     move_player()
     block_player()
 
+
+#A faire
 def move_ia():
     return
+#A faire
 def block_ia():
     return
+#A faire
 def Ia_turn():
     move_ia()
     block_ia()
