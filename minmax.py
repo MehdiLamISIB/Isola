@@ -10,6 +10,47 @@ class Node():
         self.child_count=len(self.child_nodes)
 
 
+
+
+
+
+### Fonction peut être utiliser pour Joueur et IA
+def check_cell_around(PLAYER_TYPE):
+    pl_pos = np.array(np.where(board == PLAYER_TYPE)).reshape((2, 1))
+    pl_pos = [pl_pos[1][0] , pl_pos[0][0] ]
+    x=pl_pos[0]
+    y=pl_pos[1]
+    # ia_position = [x,y]
+    loose_sum=0
+    if(x==0 and y==0):
+        #Max -3
+        return abs(board[y+1][x]+ board[y+1][x+1]+ board[y][x+1])
+    elif (x == 6 and y == 0):
+        return abs( board[y+1][x]+ board[y+1][x+1]+ board[y][x+1]  )
+    elif (x == 0 and y == 6):
+        return abs( board[y-1][x]+board[y-1][x+1] + board[y][x+1]  )
+    elif (x == 6 and y == 6):
+        return abs( board[y-1][x-1]+board[y-1][x]+ + board[y][x-1] )
+    elif (x == 0):
+        return abs( board[y-1][x]+board[y-1][x+1] + board[y][x+1] + board[y+1][x]+ board[y+1][x+1] )
+    elif (x == 6):
+        return abs( board[y-1][x-1]+board[y-1][x] + board[y][x-1] + board[y+1][x-1]+ board[y+1][x] )
+    elif (y == 0):
+        return abs( board[y][x-1]+board[y][x+1] + board[y+1][x-1]+ board[y+1][x]+ board[y+1][x+1] )
+    elif (y == 6):
+        return abs( board[y-1][x-1]+board[y-1][x]+board[y-1][x+1] + board[y][x-1]+board[y][x+1]  )
+    else:
+        #max 8, si 8 alors joueur PERDU !!!!!
+        return abs( board[y-1][x-1]+board[y-1][x]+board[y-1][x+1] +
+                 board[y][x-1]+board[y][x+1] +
+                 board[y+1][x-1]+ board[y+1][x]+ board[y+1][x+1] )
+
+
+
+
+
+
+
 def generate_moves_and_blocks(board, player):
     # Find the player's current position
     for row_idx, row in enumerate(board):
