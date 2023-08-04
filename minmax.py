@@ -20,6 +20,8 @@ def generate_moves_and_blocks(board, player):
 
     moves = []
     blocks = []
+
+    # Les directions que peut faire l'IA ou le joueur
     directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
 
     for dir_row, dir_col in directions:
@@ -48,6 +50,9 @@ Liste des variables heuristiques:
     LIES A l'IA (poids negatif):
     - n1: distance par rapport au coin
     - n2: nombre de bloc autour de l'IA
+    
+    Je dois aussi prendre en compte la séquence :
+    - D'abord l'IA bouge puis pose son bloc
 """
 
 
