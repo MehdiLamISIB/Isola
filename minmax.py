@@ -52,7 +52,7 @@ def check_cell_around(PLAYER_TYPE):
 
 
 def generate_moves_and_blocks(board, PLAYER_TYPE):
-    # Obtient la position du joueur/IA 
+    # Obtient la position du joueur/IA
     player_position = np.array(np.where(board == JOUEUR_CASE)).reshape((2, 1))
     player_pos = [player_position[0][0] + 1, player_position[1][0] + 1]
     moves = []
@@ -61,17 +61,19 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
     # Les directions que peut faire l'IA ou le joueur
     directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
 
+
+    # Ajoute tout les mouvements possibles
     for dir_row, dir_col in directions:
         new_row = player_position[0] + dir_row
         new_col = player_position[1] + dir_col
         if 0 <= new_row < len(board) and 0 <= new_col < len(board[0]) and board[new_row][new_col] == 0:
             moves.append((new_row, new_col))
 
-    for row_idx, row in enumerate(board):
-        for col_idx, cell in enumerate(row):
-            if cell == 0 and (row_idx, col_idx) != player_position:
-                blocks.append((row_idx, col_idx))
-
+    # Ajoute tout les positions des cellules vides (endroit pour bloquer)
+    empty_cells=np.array(np.where(board == FREE_CASE))
+    #[ [y,x],[y1,x1], .... ]
+    empty_cells=[ [empty_cells[0][i],empty_cells[1][i]] for i in range(len(empty_cells[0]))]
+    print(empty_cells)
     return moves, blocks
 
 

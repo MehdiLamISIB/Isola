@@ -207,4 +207,14 @@ def isola_game():
             break
 
 #show_board()
-isola_game()
+
+#isola_game()
+
+print(board)
+print("")
+print(np.array(np.where(board == FREE_CASE)))
+
+
+#empty_cells=np.array(np.where(board == FREE_CASE))
+#empty_cells=[ [empty_cells[0][i],empty_cells[1][i]] for i in range(len(empty_cells[0]))]
+#print(empty_cells)
