@@ -51,14 +51,10 @@ def check_cell_around(PLAYER_TYPE):
 
 
 
-def generate_moves_and_blocks(board, player):
-    # Find the player's current position
-    for row_idx, row in enumerate(board):
-        for col_idx, cell in enumerate(row):
-            if cell == player:
-                player_position = (row_idx, col_idx)
-                break
-
+def generate_moves_and_blocks(board, PLAYER_TYPE):
+    # Obtient la position du joueur/IA 
+    player_position = np.array(np.where(board == JOUEUR_CASE)).reshape((2, 1))
+    player_pos = [player_position[0][0] + 1, player_position[1][0] + 1]
     moves = []
     blocks = []
 
