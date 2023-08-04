@@ -1,3 +1,11 @@
+import numpy as np
+
+FREE_CASE=0
+JOUEUR_CASE=1
+IA_CASE=2
+WALL_CASE=-1
+
+
 class Node():
     def __init__(self, value):
         # Heurestic value
@@ -8,10 +16,6 @@ class Node():
 
         self.child_nodes.append(node)
         self.child_count=len(self.child_nodes)
-
-
-
-
 
 
 ### Fonction peut être utiliser pour Joueur et IA
@@ -32,6 +36,7 @@ def check_cell_around(PLAYER_TYPE):
     elif (x == 6 and y == 6):
         return abs( board[y-1][x-1]+board[y-1][x]+ + board[y][x-1] )
     elif (x == 0):
+        #Max -5
         return abs( board[y-1][x]+board[y-1][x+1] + board[y][x+1] + board[y+1][x]+ board[y+1][x+1] )
     elif (x == 6):
         return abs( board[y-1][x-1]+board[y-1][x] + board[y][x-1] + board[y+1][x-1]+ board[y+1][x] )
@@ -47,13 +52,9 @@ def check_cell_around(PLAYER_TYPE):
 
 
 
-
-
-
-
 def generate_moves_and_blocks(board, PLAYER_TYPE):
     # Obtient la position du joueur/IA
-    player_position = np.array(np.where(board == JOUEUR_CASE)).reshape((2, 1))
+    player_position = np.array(np.where(board == PLAYER_TYPE)).reshape((2, 1))
     player_pos = [player_position[0][0] + 1, player_position[1][0] + 1]
     moves = []
     blocks = []
@@ -103,7 +104,6 @@ def evaluate_board(board):
 
 def minmax(node, depth, alpha, beta, maximizing_player):
     """
-
     :param node: noeud racine
     :param depth: profondeur
     :param alpha: meilleur maximimum
@@ -111,7 +111,6 @@ def minmax(node, depth, alpha, beta, maximizing_player):
     :param maximizing_player: est ce qu'on maximise ?
     :return:
     """
-
 
     ### Cas 1: Profondeur==0 --> recursion finale
     if depth == 0:
@@ -125,7 +124,7 @@ def minmax(node, depth, alpha, beta, maximizing_player):
     """
     if maximizing_player:
         max_eval = float('-inf')
-        moves, blocks = generate_moves_and_blocks(board, player1)
+        moves, blocks = generate_moves_and_blocks(board,JOUEUR_CASE)
 
         for move in moves:
             new_board = make_move(board, move)

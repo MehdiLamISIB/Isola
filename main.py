@@ -1,6 +1,6 @@
 import numpy as np
-from tkinter import *
 from random import randrange
+from minmax import *
 """
 Le déroulement du jeu se passe ainsi :
     - D'abord le joueur bouge et pose un block
@@ -35,6 +35,7 @@ board= np.array( [
     [FREE_CASE, FREE_CASE, FREE_CASE, FREE_CASE, JOUEUR_CASE, FREE_CASE, FREE_CASE],
 ]
 )
+
 
 
 def show_board():
@@ -142,6 +143,7 @@ def Player_turn():
 
 
 
+
 #A faire
 def move_ia():
     return
@@ -208,11 +210,8 @@ def isola_game():
 
 #show_board()
 
-#isola_game()
+isola_game()
 
-print(board)
-print("")
-print(np.array(np.where(board == FREE_CASE)))
 
 
 #empty_cells=np.array(np.where(board == FREE_CASE))
