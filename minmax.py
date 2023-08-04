@@ -40,13 +40,14 @@ def generate_moves_and_blocks(board, player):
 
 """
 Liste des variables heuristiques:
-    LIES AU JOUEUR:
-    - Position du joueur
-    - distance au joueur
-    - nombre de bloc autour du joueur
+    LIES AU JOUEUR (poids positif):
+    - p1: position du joueur
+    - p2: distance au joueur
+    - p3: nombre de bloc autour du joueur
     
-    LIES A l'IA:
-    
+    LIES A l'IA (poids negatif):
+    - n1: distance par rapport au coin
+    - n2: nombre de bloc autour de l'IA
 """
 
 
