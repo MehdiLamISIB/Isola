@@ -5,7 +5,7 @@ class Node():
         self.child_nodes=[]
         self.child_count=0
     def AddNode(self,node):
-        
+
         self.child_nodes.append(node)
         self.child_count=len(self.child_nodes)
 def minmax(depth):

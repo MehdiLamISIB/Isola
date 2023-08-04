@@ -142,15 +142,6 @@ def Player_turn():
 
 
 
-def heurestic_value():
-    #push know work!
-    pass
-
-def minmax_algo():
-    pass
-
-
-
 #A faire
 def move_ia():
     return
