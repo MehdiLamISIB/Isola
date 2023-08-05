@@ -1,6 +1,6 @@
 import numpy as np
 from random import randrange
-from minmax import *
+import minmax as minmax
 """
 Le déroulement du jeu se passe ainsi :
     - D'abord le joueur bouge et pose un block
@@ -35,6 +35,14 @@ board= np.array( [
     [FREE_CASE, FREE_CASE, FREE_CASE, FREE_CASE, JOUEUR_CASE, FREE_CASE, FREE_CASE],
 ]
 )
+
+
+
+
+
+
+
+
 
 
 
@@ -144,16 +152,12 @@ def Player_turn():
 
 
 
-#A faire
-def move_ia():
-    return
-#A faire
-def block_ia():
-    return
+
 #A faire
 def Ia_turn():
-    move_ia()
-    block_ia()
+    minmax.board=board
+    root=minmax.Node(0)
+    minmax.minmax(root, depth=2, alpha=float('-inf'), beta=float('inf'), maximizing_player=True)
 
 
 def check_winner(PLAYER_TYPE):

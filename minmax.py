@@ -1,11 +1,10 @@
 import numpy as np
-
 FREE_CASE=0
 JOUEUR_CASE=1
 IA_CASE=2
 WALL_CASE=-1
 
-
+board=[]
 
 
 class Node():
@@ -160,7 +159,7 @@ def evaluate_board(board,PLAYER_TYPE):
         around_adversary_value = check_cell_around(IA_CASE)
         around_player = check_cell_around(JOUEUR_CASE)
 
-    return 5 * around_adversary_value - 10 * around_value + 3.5*manthann_distance
+    return 5 * around_adversary_value - 10 * around_player + 3.5*manthann_distance
 
 def minmax(node, depth, alpha, beta, maximizing_player):
     """
