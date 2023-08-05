@@ -157,7 +157,7 @@ def Player_turn():
 def Ia_turn():
     minmax.board=board
     root=minmax.Node(0)
-    print(minmax.minmax(root, depth=2, alpha=float('-inf'), beta=float('inf'), maximizing_player=True))
+    print(minmax.minmax(root, depth=3, alpha=float('-inf'), beta=float('inf'), maximizing_player=True))
 
 
 def check_winner(PLAYER_TYPE):

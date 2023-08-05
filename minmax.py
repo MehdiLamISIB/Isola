@@ -75,6 +75,7 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
     pl_pos = np.array(np.where(board == PLAYER_TYPE))
     pl_pos = [pl_pos[0][0], pl_pos[1][0]]
 
+
     # On verifie si ces mouvements sont possibles, si oui on les rajoutes dans la listes des mouvements
     # ici pour moves --> on a les coordonnées qui commence par 0 (0,0) est donc la position du corner supérieur gauche |
     for pos in directions:
@@ -102,11 +103,13 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
     for move in moves:
         # on enleve l'ancienne poisiton
         # et on la replace par la nouvelle position
-        move_board=np.where(board==PLAYER_TYPE,FREE_CASE,board)
-        move_board[move[0],move[1]]=PLAYER_TYPE
 
+        move_board=np.array(np.where(board==PLAYER_TYPE,FREE_CASE,board))
+        move_board[move[0],move[1]]=PLAYER_TYPE
+        print("MOVE THE BOARD : ")
+        print(move_board)
         # Ajoute tout les positions des cellules vides (endroit pour bloquer)
-        empty_cells=np.array(np.where(move_board == FREE_CASE))
+        empty_cells=np.array(np.where( np.logical_or(move_board == FREE_CASE,move_board==WALL_CASE) ) )
         #[ [y,x],[y1,x1], .... ]
         empty_cells=[ [empty_cells[0][i],empty_cells[1][i]] for i in range(len(empty_cells[0]))]
         blocks.append(empty_cells)
@@ -177,6 +180,7 @@ def minmax(node, depth, alpha, beta, maximizing_player):
             node.value = evaluate_board(board,IA_CASE)
         else:
             node.value = evaluate_board(board,JOUEUR_CASE)
+        #print("DEPTH====0")
         return node.value
 
     ### Cas 2: Maximiser --->
@@ -195,6 +199,9 @@ def minmax(node, depth, alpha, beta, maximizing_player):
             new_board = make_move(board, move,IA_CASE)
             for block in blocks:
                 new_board_with_block = place_block(new_board, block)
+
+                new_board=new_board_with_block
+
                 child_node = Node(0)  # Create a new child node
                 node.child_nodes.append(child_node)
                 node.child_count += 1
@@ -204,6 +211,11 @@ def minmax(node, depth, alpha, beta, maximizing_player):
                 #optimisation alpha beta
                 if beta <= alpha:
                     break  # Beta cut-off
+        #print("MAX MAX")
+        if(depth==3):
+            print(max_eval)
+            print(new_board)
+            print("RACINE")
         return max_eval
     else:
         ### Cas 3:Minimiser --->
@@ -225,4 +237,5 @@ def minmax(node, depth, alpha, beta, maximizing_player):
                 beta = min(beta, evaluation)
                 if beta <= alpha:
                     break  # Alpha cut-off
+        #print("MIN MIN")
         return min_eval
