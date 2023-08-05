@@ -65,12 +65,26 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
     directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
 
 
+
     # Ajoute tout les mouvements possibles
     for dir_row, dir_col in directions:
         new_row = player_position[0] + dir_row
         new_col = player_position[1] + dir_col
         if 0 <= new_row < len(board) and 0 <= new_col < len(board[0]) and board[new_row][new_col] == 0:
             moves.append((new_row, new_col))
+
+
+    """
+    Pour chaque move, on aura un block associe
+    
+    moves -- comprend les positions que le joueur/IA peut faire
+    blocks -- tableau qui comprend le tableau avec chaque position bloque , ce tableau est liés au mouvement du joueur
+    [ [(0,1),(3,2)],.... ]
+    |   ^
+    |   |
+    |   tableau qui présente les endroit libre pour bloque lies au mouvement fait dans le même tour (car 2 choix a faire dans un même tour)
+    |---|
+    """
 
     # Ajoute tout les positions des cellules vides (endroit pour bloquer)
     empty_cells=np.array(np.where(board == FREE_CASE))
@@ -102,9 +116,11 @@ Liste des variables heuristiques:
 
 def evaluate_board(board):
     # Simple heuristic: count the number of empty cells
-    empty_cells = sum(row.count(0) for row in board)
-    return empty_cells
+    #empty_cells = sum(row.count(0) for row in board)
+    #return empty_cells
 
+
+    return
 
 def minmax(node, depth, alpha, beta, maximizing_player):
     """
@@ -143,6 +159,7 @@ def minmax(node, depth, alpha, beta, maximizing_player):
                 evaluation = minmax(child_node, depth - 1, alpha, beta, False)
                 max_eval = max(max_eval, evaluation)
                 alpha = max(alpha, evaluation)
+                #optimisation alpha beta
                 if beta <= alpha:
                     break  # Beta cut-off
         return max_eval
