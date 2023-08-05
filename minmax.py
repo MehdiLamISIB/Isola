@@ -148,21 +148,19 @@ def evaluate_board(board,PLAYER_TYPE):
     """
     player_pos = np.where(board == PLAYER_TYPE)
     player_pos = [player_pos[0][0], player_pos[1][0]]
+
+    manthann_distance=abs(3-player_pos[0])+abs(3-player_pos[1])
+
     if(PLAYER_TYPE==IA_CASE):
         # retourne le nombre de case autour du joueur
         around_adversary_value = check_cell_around(JOUEUR_CASE)
         around_player = check_cell_around(IA_CASE)
 
-        return -10 * around_value
     else:
-        around_adversary_value = check_cell_around(JOUEUR_CASE)
-        around_player = check_cell_around(IA_CASE)
-        return 0
+        around_adversary_value = check_cell_around(IA_CASE)
+        around_player = check_cell_around(JOUEUR_CASE)
 
-
-
-
-    return
+    return 5 * around_adversary_value - 10 * around_value + 3.5*manthann_distance
 
 def minmax(node, depth, alpha, beta, maximizing_player):
     """
