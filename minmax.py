@@ -69,6 +69,8 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
     pl_pos = np.array(np.where(board == PLAYER_TYPE))
     pl_pos = [pl_pos[0][0], pl_pos[1][0]]
 
+    # On verifie si ces mouvements sont possibles, si oui on les rajoutes dans la listes des mouvements
+    # ici pour moves --> on a les coordonnées qui commence par 0 (0,0) est donc la position du corner supérieur gauche |
     for pos in directions:
         x = pos[1]
         y = pos[0]
@@ -79,12 +81,8 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
         else:
             moves.append([pl_pos[0] + y, pl_pos[1] + x])
 
-    # Ajoute tout les mouvements possibles
-    for dir_row, dir_col in directions:
-        new_row = player_position[0] + dir_row
-        new_col = player_position[1] + dir_col
-        if 0 <= new_row < len(board) and 0 <= new_col < len(board[0]) and board[new_row][new_col] == 0:
-            moves.append((new_row, new_col))
+
+
 
 
     """
