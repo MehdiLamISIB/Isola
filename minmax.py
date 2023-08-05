@@ -80,8 +80,8 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
     for pos in directions:
         x = pos[1]
         y = pos[0]
-        print(x, y)
-        print(pl_pos)
+        #print(x, y)
+        #print(pl_pos)
         if ( (pl_pos[1] + x < 0) or (pl_pos[1] + x > 6) or (pl_pos[0] + y < 0) or (pl_pos[0] + y > 6) ):
             continue
         if(board[pl_pos[0] + y][pl_pos[1] + x]==WALL_CASE):
@@ -110,7 +110,7 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
         #[ [y,x],[y1,x1], .... ]
         empty_cells=[ [empty_cells[0][i],empty_cells[1][i]] for i in range(len(empty_cells[0]))]
         blocks.append(empty_cells)
-        print(empty_cells)
+        #print(empty_cells)
     return moves, blocks
 
 
