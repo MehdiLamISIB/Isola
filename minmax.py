@@ -59,6 +59,7 @@ def make_move(board,move,PLAYER_TYPE):
     return move_board
 
 def place_block(board,block):
+    # ajoute le block
     block_board=board
     block_board[block[0], block[1]] = WALL_CASE
     return block_board
