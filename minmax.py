@@ -54,6 +54,9 @@ def check_cell_around(PLAYER_TYPE):
 
 
 
+
+
+
 def generate_moves_and_blocks(board, PLAYER_TYPE):
     # Obtient la position du joueur/IA
     player_position = np.array(np.where(board == PLAYER_TYPE)).reshape((2, 1))
@@ -63,8 +66,18 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
 
     # Les directions que peut faire l'IA ou le joueur
     directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
+    pl_pos = np.array(np.where(board == PLAYER_TYPE))
+    pl_pos = [pl_pos[0][0], pl_pos[1][0]]
 
-
+    for pos in directions:
+        x = pos[1]
+        y = pos[0]
+        print(x, y)
+        print(pl_pos)
+        if ( (pl_pos[1] + x < 0) or (pl_pos[1] + x > 6) or (pl_pos[0] + y < 0) or (pl_pos[0] + y > 6) ):
+            continue
+        else:
+            moves.append([pl_pos[0] + y, pl_pos[1] + x])
 
     # Ajoute tout les mouvements possibles
     for dir_row, dir_col in directions:
