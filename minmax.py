@@ -52,11 +52,6 @@ def check_cell_around(PLAYER_TYPE):
                  board[y][x-1]+board[y][x+1] +
                  board[y+1][x-1]+ board[y+1][x]+ board[y+1][x+1] )
 
-
-
-
-
-
 def generate_moves_and_blocks(board, PLAYER_TYPE):
     # Obtient la position du joueur/IA
     player_position = np.array(np.where(board == PLAYER_TYPE)).reshape((2, 1))
@@ -80,11 +75,6 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
             continue
         else:
             moves.append([pl_pos[0] + y, pl_pos[1] + x])
-
-
-
-
-
     """
     Pour chaque move, on aura un block associe
     
@@ -96,12 +86,18 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
     |   tableau qui présente les endroit libre pour bloque lies au mouvement fait dans le même tour (car 2 choix a faire dans un même tour)
     |---|
     """
+    for move in moves:
+        # on enleve l'ancienne poisiton
+        # et on la replace par la nouvelle position
+        move_board=np.where(board==PLAYER_TYPE,FREE_CASE,board)
+        move_board[move[0],move[1]]=PLAYER_TYPE
 
-    # Ajoute tout les positions des cellules vides (endroit pour bloquer)
-    empty_cells=np.array(np.where(board == FREE_CASE))
-    #[ [y,x],[y1,x1], .... ]
-    empty_cells=[ [empty_cells[0][i],empty_cells[1][i]] for i in range(len(empty_cells[0]))]
-    print(empty_cells)
+        # Ajoute tout les positions des cellules vides (endroit pour bloquer)
+        empty_cells=np.array(np.where(move_board == FREE_CASE))
+        #[ [y,x],[y1,x1], .... ]
+        empty_cells=[ [empty_cells[0][i],empty_cells[1][i]] for i in range(len(empty_cells[0]))]
+        blocks.append(empty_cells)
+        print(empty_cells)
     return moves, blocks
 
 
