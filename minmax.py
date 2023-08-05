@@ -52,6 +52,17 @@ def check_cell_around(PLAYER_TYPE):
                  board[y][x-1]+board[y][x+1] +
                  board[y+1][x-1]+ board[y+1][x]+ board[y+1][x+1] )
 
+
+def make_move(board,move,PLAYER_TYPE):
+    move_board = np.where(board == PLAYER_TYPE, FREE_CASE, board)
+    move_board[move[0], move[1]] = PLAYER_TYPE
+    return move_board
+
+def place_block(board,block):
+    block_board=board
+    block_board[block[0], block[1]] = WALL_CASE
+    return block_board
+
 def generate_moves_and_blocks(board, PLAYER_TYPE):
     # Obtient la position du joueur/IA
     player_position = np.array(np.where(board == PLAYER_TYPE)).reshape((2, 1))
@@ -151,13 +162,13 @@ def minmax(node, depth, alpha, beta, maximizing_player):
     """
     if maximizing_player:
         max_eval = float('-inf')
-        moves, blocks = generate_moves_and_blocks(board,JOUEUR_CASE)
+        moves, blocks = generate_moves_and_blocks(board,IA_CASE)
 
 
 
         # D'abord le joueur bouge, ce qui crée un nouveau plateau pour bloquer ensuite
         for move in moves:
-            new_board = make_move(board, move)
+            new_board = make_move(board, move,IA_CASE)
             for block in blocks:
                 new_board_with_block = place_block(new_board, block)
                 child_node = Node(0)  # Create a new child node
@@ -176,10 +187,10 @@ def minmax(node, depth, alpha, beta, maximizing_player):
         L'algorithme cherche a minimiser le joueur  
         """
         min_eval = float('inf')
-        moves, blocks = generate_moves_and_blocks(board, player2)
+        moves, blocks = generate_moves_and_blocks(board, JOUEUR_CASE)
 
         for move in moves:
-            new_board = make_move(board, move)
+            new_board = make_move(board, move,JOUEUR_CASE)
             for block in blocks:
                 new_board_with_block = place_block(new_board, block)
                 child_node = Node(0)  # Create a new child node
