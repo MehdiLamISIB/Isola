@@ -6,6 +6,8 @@ IA_CASE=2
 WALL_CASE=-1
 
 
+
+
 class Node():
     def __init__(self, value):
         # Heurestic value
@@ -93,6 +95,8 @@ Liste des variables heuristiques:
     
     Je dois aussi prendre en compte la séquence :
     - D'abord l'IA bouge puis pose son bloc
+    
+    Donc une valeur heuristique pour le mouvement et une pour poser le bloc
 """
 
 
@@ -120,12 +124,15 @@ def minmax(node, depth, alpha, beta, maximizing_player):
     ### Cas 2: Maximiser --->
     """
     L'algoritme itere tous les cas possible
-    pour maximiser
+    pour maximiser l'IA
     """
     if maximizing_player:
         max_eval = float('-inf')
         moves, blocks = generate_moves_and_blocks(board,JOUEUR_CASE)
 
+
+
+        # D'abord le joueur bouge, ce qui crée un nouveau plateau pour bloquer ensuite
         for move in moves:
             new_board = make_move(board, move)
             for block in blocks:
