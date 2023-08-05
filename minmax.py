@@ -85,6 +85,8 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
         print(pl_pos)
         if ( (pl_pos[1] + x < 0) or (pl_pos[1] + x > 6) or (pl_pos[0] + y < 0) or (pl_pos[0] + y > 6) ):
             continue
+        if(board[pl_pos[0] + y][pl_pos[1] + x]==WALL_CASE):
+            continue
         else:
             moves.append([pl_pos[0] + y, pl_pos[1] + x])
     """
@@ -133,10 +135,31 @@ Liste des variables heuristiques:
 """
 
 
-def evaluate_board(board):
+def evaluate_board(board,PLAYER_TYPE):
     # Simple heuristic: count the number of empty cells
     #empty_cells = sum(row.count(0) for row in board)
     #return empty_cells
+
+    """
+    Test fonction d'evaluation
+    --> on essaie d'entourer l'adversaire le plus rapidement
+    --> on privilegie les mouvement au centre
+    --> on
+    """
+    player_pos = np.where(board == PLAYER_TYPE)
+    player_pos = [player_pos[0][0], player_pos[1][0]]
+    if(PLAYER_TYPE==IA_CASE):
+        # retourne le nombre de case autour du joueur
+        around_adversary_value = check_cell_around(JOUEUR_CASE)
+        around_player = check_cell_around(IA_CASE)
+
+        return -10 * around_value
+    else:
+        around_adversary_value = check_cell_around(JOUEUR_CASE)
+        around_player = check_cell_around(IA_CASE)
+        return 0
+
+
 
 
     return
@@ -151,9 +174,12 @@ def minmax(node, depth, alpha, beta, maximizing_player):
     :return:
     """
 
-    ### Cas 1: Profondeur==0 --> recursion finale
+    ### Cas 1: Profondeur==0 --> recursion finale, retour de la pile
     if depth == 0:
-        node.value = evaluate_board(board)
+        if(maximizing_player):
+            node.value = evaluate_board(board,IA_CASE)
+        else:
+            node.value = evaluate_board(board,JOUEUR_CASE)
         return node.value
 
     ### Cas 2: Maximiser --->
