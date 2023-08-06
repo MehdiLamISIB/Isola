@@ -5,7 +5,7 @@ IA_CASE=2
 WALL_CASE=-1
 
 board=[]
-
+minmax_board=[]
 
 class Node():
     def __init__(self, value):
@@ -85,7 +85,7 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
         #print(pl_pos)
         if ( (pl_pos[1] + x < 0) or (pl_pos[1] + x > 6) or (pl_pos[0] + y < 0) or (pl_pos[0] + y > 6) ):
             continue
-        if(board[pl_pos[0] + y][pl_pos[1] + x]==WALL_CASE):
+        if(board[pl_pos[0] + y][pl_pos[1] + x]==WALL_CASE or board[pl_pos[0] + y][pl_pos[1] + x]==IA_CASE or board[pl_pos[0] + y][pl_pos[1] + x]==JOUEUR_CASE):
             continue
         else:
             moves.append([pl_pos[0] + y, pl_pos[1] + x])
@@ -106,8 +106,8 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
 
         move_board=np.array(np.where(board==PLAYER_TYPE,FREE_CASE,board))
         move_board[move[0],move[1]]=PLAYER_TYPE
-        print("MOVE THE BOARD : ")
-        print(move_board)
+        #print("MOVE THE BOARD : ")
+        #print(move_board)
         # Ajoute tout les positions des cellules vides (endroit pour bloquer)
         empty_cells=np.array(np.where( np.logical_or(move_board == FREE_CASE,move_board==WALL_CASE) ) )
         #[ [y,x],[y1,x1], .... ]
@@ -162,9 +162,10 @@ def evaluate_board(board,PLAYER_TYPE):
         around_adversary_value = check_cell_around(IA_CASE)
         around_player = check_cell_around(JOUEUR_CASE)
 
-    return 5 * around_adversary_value - 10 * around_player + 3.5*manthann_distance
+    return 100 * around_adversary_value - 20 * around_player + 3.5*manthann_distance
 
 def minmax(node, depth, alpha, beta, maximizing_player):
+    global minmax_board
     """
     :param node: noeud racine
     :param depth: profondeur
@@ -212,10 +213,7 @@ def minmax(node, depth, alpha, beta, maximizing_player):
                 if beta <= alpha:
                     break  # Beta cut-off
         #print("MAX MAX")
-        if(depth==3):
-            print(max_eval)
-            print(new_board)
-            print("RACINE")
+        minmax_board=new_board
         return max_eval
     else:
         ### Cas 3:Minimiser --->
@@ -239,3 +237,7 @@ def minmax(node, depth, alpha, beta, maximizing_player):
                     break  # Alpha cut-off
         #print("MIN MIN")
         return min_eval
+
+
+def new_board():
+    return minmax_board
