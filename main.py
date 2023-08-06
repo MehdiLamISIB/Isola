@@ -158,7 +158,7 @@ def Ia_turn():
     minmax.board=board
     root=minmax.Node(0)
 
-    minmax.minmax(root, depth=3, alpha=float('-inf'), beta=float('inf'), maximizing_player=True)
+    minmax.minmax(root, depth=3, alpha=float('-inf'), beta=float('inf'), maximizing_player=True,board=minmax.board)
 
     print("THE MINMAX BOARD")
     print(minmax.minmax_board)
