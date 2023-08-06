@@ -72,6 +72,7 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
         print(board)
         print("ERROR")
         print("ERROR")
+        return
 
     player_pos = [player_position[0][0] + 1, player_position[1][0] + 1]
     moves = []
@@ -111,12 +112,14 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
         # on enleve l'ancienne poisiton
         # et on la replace par la nouvelle position
 
+        #move_board=make_move(board, move, PLAYER_TYPE)
         move_board=np.array(np.where(board==PLAYER_TYPE,FREE_CASE,board))
         move_board[move[0],move[1]]=PLAYER_TYPE
+
         #print("MOVE THE BOARD : ")
         #print(move_board)
         # Ajoute tout les positions des cellules vides (endroit pour bloquer)
-        empty_cells=np.array(np.where( np.logical_or(move_board == FREE_CASE,move_board==WALL_CASE) ) )
+        empty_cells=np.array(np.where(move_board == FREE_CASE) )
         #[ [y,x],[y1,x1], .... ]
         empty_cells=[ [empty_cells[0][i],empty_cells[1][i]] for i in range(len(empty_cells[0]))]
         blocks.append(empty_cells)
