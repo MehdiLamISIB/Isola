@@ -1,4 +1,5 @@
 import numpy as np
+
 FREE_CASE=0
 JOUEUR_CASE=1
 IA_CASE=2
@@ -17,7 +18,6 @@ class Node():
 
         self.child_nodes.append(node)
         self.child_count=len(self.child_nodes)
-
 
 ### Fonction peut être utiliser pour Joueur et IA
 def check_cell_around(PLAYER_TYPE):
@@ -50,7 +50,6 @@ def check_cell_around(PLAYER_TYPE):
         return abs( board[y-1][x-1]+board[y-1][x]+board[y-1][x+1] +
                  board[y][x-1]+board[y][x+1] +
                  board[y+1][x-1]+ board[y+1][x]+ board[y+1][x+1] )
-
 
 def make_move(board,move,PLAYER_TYPE):
     move_board = board#np.array( np.where(board == PLAYER_TYPE, FREE_CASE, board) )
@@ -107,7 +106,6 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
         blocks.append(empty_cells.tolist())
     return moves, blocks
 
-
 """
 Liste des variables heuristiques:
     LIES AU JOUEUR (poids positif):
@@ -124,7 +122,6 @@ Liste des variables heuristiques:
     
     Donc une valeur heuristique pour le mouvement et une pour poser le bloc
 """
-
 
 def evaluate_board(board,PLAYER_TYPE):
     # Simple heuristic: count the number of empty cells
@@ -163,7 +160,8 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
     :param maximizing_player: est ce qu'on maximise ?
     :return:
     """
-
+    new_board_with_block=[]
+    new_board=[]
     ### Cas 1: Profondeur==0 --> recursion finale, retour de la pile
     if depth == 0:
         if(maximizing_player):
@@ -172,20 +170,14 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
             node.value = evaluate_board(board,JOUEUR_CASE)
         #print("DEPTH====0")
         return node.value
-
     ### Cas 2: Maximiser --->
     """
     L'algoritme itere tous les cas possible
     pour maximiser l'IA
     """
-
-    new_board_with_bloc=[]
-    new_board=[]
-
     if maximizing_player:
         max_eval = float('-inf')
         moves, blocks = generate_moves_and_blocks(board,IA_CASE)
-
         # D'abord le joueur bouge, ce qui crée un nouveau plateau pour bloquer ensuite
         block_list_count=0
         for move in moves:

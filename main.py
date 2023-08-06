@@ -1,5 +1,4 @@
 import numpy as np
-from random import randrange
 import minmax as minmax
 """
 Le déroulement du jeu se passe ainsi :
