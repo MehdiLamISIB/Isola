@@ -21,7 +21,8 @@ class Node():
 
 ### Fonction peut être utiliser pour Joueur et IA
 def check_cell_around(PLAYER_TYPE):
-    pl_pos = np.array(np.where(board == PLAYER_TYPE)).reshape((2, 1))
+    pl_pos = np.array(np.where(board == PLAYER_TYPE))
+    print("PL_POS ------> ",pl_pos)
     pl_pos = [pl_pos[1][0] , pl_pos[0][0] ]
     x=pl_pos[0]
     y=pl_pos[1]
@@ -53,7 +54,9 @@ def check_cell_around(PLAYER_TYPE):
 
 
 def make_move(board,move,PLAYER_TYPE):
-    move_board = np.array( np.where(board == PLAYER_TYPE, FREE_CASE, board) )
+    move_board = board#np.array( np.where(board == PLAYER_TYPE, FREE_CASE, board) )
+    old_position=np.array(np.where(board==PLAYER_TYPE))
+    move_board[old_position[0][0],old_position[1][0]]=FREE_CASE
     move_board[move[0], move[1]] = PLAYER_TYPE
     return move_board
 
@@ -98,14 +101,11 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
         # on enleve l'ancienne poisiton
         # et on la replace par la nouvelle position
         move_board=make_move(board, move, PLAYER_TYPE)
-
         # Ajoute tout les positions des cellules vides (endroit pour bloquer)
-        empty_cells=np.array(np.where(move_board == FREE_CASE) )
+        empty_cells=np.array(np.where(move_board == FREE_CASE) ).T
         #[ [y,x],[y1,x1], .... ]
-        print(empty_cells)
-        empty_cells=[  [empty_cells[0][i],empty_cells[1][i]]  for i in range(len(empty_cells[0])) ]
-        blocks.append(empty_cells)
-        #print(empty_cells)
+        #empty_cells=[  [empty_cells[0][i],empty_cells[1][i]]  for i in range(len(empty_cells[0])) ]
+        blocks.append(empty_cells.tolist())
     return moves, blocks
 
 
@@ -235,7 +235,3 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
             #print("MIN MIN")
             minmax_board = new_board
         return min_eval
-
-
-def new_board():
-    return minmax_board
