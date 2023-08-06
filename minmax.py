@@ -55,9 +55,6 @@ def check_cell_around(PLAYER_TYPE):
 def make_move(board,move,PLAYER_TYPE):
     move_board = np.array( np.where(board == PLAYER_TYPE, FREE_CASE, board) )
     move_board[move[0], move[1]] = PLAYER_TYPE
-    #print("MOVE BOARD MOVE MOBARD")
-    #print(move_board)
-    #print("MOVE BOARD MOVE MOBARD")
     return move_board
 
 def place_block(board,block):
@@ -72,17 +69,10 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
         player_position = np.array(np.where(board == PLAYER_TYPE)).reshape((2, 1))
     except:
         print("ERROR")
-        print("ERROR")
-        print("ERROR")
-        print("ERROR")
-        print("ERROR")
         print(board)
         print("ERROR")
         print("ERROR")
-        print("ERROR")
-        print("ERROR")
-        print("ERROR")
-        print("ERROR")
+
     player_pos = [player_position[0][0] + 1, player_position[1][0] + 1]
     moves = []
     blocks = []
@@ -214,13 +204,10 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
 
         # D'abord le joueur bouge, ce qui crée un nouveau plateau pour bloquer ensuite
         for move in moves:
-            print(" LIST DES MOVES ________------->>>>>",moves)
             new_board = make_move(board, move,IA_CASE)
             ## on prend la liste de WALL_CASE disponible associe a un mouvement fait
             for blocks_list in blocks:
                 for block in blocks_list:
-                    print("THE BLOCK")
-                    print(block)
                     new_board_with_block = place_block(new_board, block)
 
                     new_board=new_board_with_block
@@ -257,7 +244,6 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                     node.child_nodes.append(child_node)
                     node.child_count += 1
                     ## Chaque nouvelle evaluation minmax aura son propre plateau de jeu (Noeud si on veut
-                    #print(new_board_with_block)
                     evaluation = minmax(child_node, depth - 1, alpha, beta, True,new_board)
                     min_eval = min(min_eval, evaluation)
                     beta = min(beta, evaluation)
