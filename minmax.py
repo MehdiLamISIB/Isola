@@ -22,7 +22,6 @@ class Node():
 ### Fonction peut être utiliser pour Joueur et IA
 def check_cell_around(PLAYER_TYPE):
     pl_pos = np.array(np.where(board == PLAYER_TYPE))
-    print("PL_POS ------> ",pl_pos)
     pl_pos = [pl_pos[1][0] , pl_pos[0][0] ]
     x=pl_pos[0]
     y=pl_pos[1]
@@ -179,26 +178,29 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
     L'algoritme itere tous les cas possible
     pour maximiser l'IA
     """
+
+    new_board_with_bloc=[]
+    new_board=[]
+
     if maximizing_player:
         max_eval = float('-inf')
         moves, blocks = generate_moves_and_blocks(board,IA_CASE)
 
         # D'abord le joueur bouge, ce qui crée un nouveau plateau pour bloquer ensuite
         for move in moves:
-            new_board = make_move(board, move,IA_CASE)
             ## on prend la liste des WALL_CASE disponible
             for blocks_list in blocks:
+                new_board=board
+                new_board = make_move(board, move, IA_CASE)
                 # On prend un wall_case pour l'associer au mouvement
                 for block in blocks_list:
+                    new_board_with_block=new_board
                     new_board_with_block = place_block(new_board, block)
-
-                    new_board=new_board_with_block
-
                     child_node = Node(0)  # Create a new child node
                     node.child_nodes.append(child_node)
                     node.child_count += 1
                     ## Boucle de recursion
-                    evaluation = minmax(child_node, depth - 1, alpha, beta, False,new_board)
+                    evaluation = minmax(child_node, depth - 1, alpha, beta, False,new_board_with_block)
                     max_eval = max(max_eval, evaluation)
                     alpha = max(alpha, evaluation)
                     #optimisation alpha beta
@@ -216,18 +218,17 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
         moves, blocks = generate_moves_and_blocks(board, JOUEUR_CASE)
 
         for move in moves:
+            new_board=board
             new_board = make_move(board, move,JOUEUR_CASE)
             for blocks_list in blocks:
                 for block in blocks_list:
+                    new_board_with_block = new_board
                     new_board_with_block = place_block(new_board, block)
-
-                    new_board = new_board_with_block
-
                     child_node = Node(0)  # Create a new child node
                     node.child_nodes.append(child_node)
                     node.child_count += 1
                     ## Chaque nouvelle evaluation minmax aura son propre plateau de jeu (Noeud si on veut
-                    evaluation = minmax(child_node, depth - 1, alpha, beta, True,new_board)
+                    evaluation = minmax(child_node, depth - 1, alpha, beta, True,new_board_with_block)
                     min_eval = min(min_eval, evaluation)
                     beta = min(beta, evaluation)
                     if beta <= alpha:
