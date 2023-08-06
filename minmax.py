@@ -64,17 +64,6 @@ def place_block(board,block):
     return block_board
 
 def generate_moves_and_blocks(board, PLAYER_TYPE):
-    # Obtient la position du joueur/IA
-    try:
-        player_position = np.array(np.where(board == PLAYER_TYPE)).reshape((2, 1))
-    except:
-        print("ERROR")
-        print(board)
-        print("ERROR")
-        print("ERROR")
-        return
-
-    player_pos = [player_position[0][0] + 1, player_position[1][0] + 1]
     moves = []
     blocks = []
 
@@ -89,14 +78,11 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
     for pos in directions:
         x = pos[1]
         y = pos[0]
-        #print(x, y)
-        #print(pl_pos)
         if ( (pl_pos[1] + x < 0) or (pl_pos[1] + x > 6) or (pl_pos[0] + y < 0) or (pl_pos[0] + y > 6) ):
             continue
-        if(board[pl_pos[0] + y][pl_pos[1] + x]==WALL_CASE or board[pl_pos[0] + y][pl_pos[1] + x]==IA_CASE or board[pl_pos[0] + y][pl_pos[1] + x]==JOUEUR_CASE):
+        if(board[pl_pos[0] + y][pl_pos[1] + x]!=FREE_CASE):
             continue
-        else:
-            moves.append([pl_pos[0] + y, pl_pos[1] + x])
+        moves.append([pl_pos[0] + y, pl_pos[1] + x])
     """
     Pour chaque move, on aura un block associe
     
@@ -111,22 +97,16 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
     for move in moves:
         # on enleve l'ancienne poisiton
         # et on la replace par la nouvelle position
+        move_board=make_move(board, move, PLAYER_TYPE)
 
-        #move_board=make_move(board, move, PLAYER_TYPE)
-        move_board=np.array(np.where(board==PLAYER_TYPE,FREE_CASE,board))
-        move_board[move[0],move[1]]=PLAYER_TYPE
-
-        #print("MOVE THE BOARD : ")
-        #print(move_board)
         # Ajoute tout les positions des cellules vides (endroit pour bloquer)
         empty_cells=np.array(np.where(move_board == FREE_CASE) )
         #[ [y,x],[y1,x1], .... ]
-        empty_cells=[ [empty_cells[0][i],empty_cells[1][i]] for i in range(len(empty_cells[0]))]
+        print(empty_cells)
+        empty_cells=[  [empty_cells[0][i],empty_cells[1][i]]  for i in range(len(empty_cells[0])) ]
         blocks.append(empty_cells)
         #print(empty_cells)
     return moves, blocks
-
-
 
 
 """
@@ -172,7 +152,7 @@ def evaluate_board(board,PLAYER_TYPE):
         around_adversary_value = check_cell_around(IA_CASE)
         around_player = check_cell_around(JOUEUR_CASE)
 
-    return 100 * around_adversary_value - 20 * around_player + 3.5*manthann_distance
+    return 20 * around_adversary_value - 40 * around_player - 35*manthann_distance
 
 def minmax(node, depth, alpha, beta, maximizing_player,board):
     global minmax_board
@@ -203,13 +183,12 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
         max_eval = float('-inf')
         moves, blocks = generate_moves_and_blocks(board,IA_CASE)
 
-
-
         # D'abord le joueur bouge, ce qui crée un nouveau plateau pour bloquer ensuite
         for move in moves:
             new_board = make_move(board, move,IA_CASE)
-            ## on prend la liste de WALL_CASE disponible associe a un mouvement fait
+            ## on prend la liste des WALL_CASE disponible
             for blocks_list in blocks:
+                # On prend un wall_case pour l'associer au mouvement
                 for block in blocks_list:
                     new_board_with_block = place_block(new_board, block)
 
@@ -218,6 +197,7 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                     child_node = Node(0)  # Create a new child node
                     node.child_nodes.append(child_node)
                     node.child_count += 1
+                    ## Boucle de recursion
                     evaluation = minmax(child_node, depth - 1, alpha, beta, False,new_board)
                     max_eval = max(max_eval, evaluation)
                     alpha = max(alpha, evaluation)
@@ -253,6 +233,7 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                     if beta <= alpha:
                         break  # Alpha cut-off
             #print("MIN MIN")
+            minmax_board = new_board
         return min_eval
 
 
