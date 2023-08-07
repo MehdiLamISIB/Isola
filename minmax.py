@@ -5,6 +5,8 @@ JOUEUR_CASE=1
 IA_CASE=2
 WALL_CASE=-1
 
+#Test
+
 board=[]
 minmax_board=[]
 
