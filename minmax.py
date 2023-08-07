@@ -106,6 +106,7 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
         #[ [y,x],[y1,x1], .... ]
         #empty_cells=[  [empty_cells[0][i],empty_cells[1][i]]  for i in range(len(empty_cells[0])) ]
         blocks.append(empty_cells.tolist())
+        move_board=[]
     return moves, blocks
 
 """
@@ -150,7 +151,7 @@ def evaluate_board(board,PLAYER_TYPE):
         around_adversary_value = check_cell_around(board,IA_CASE)
         around_player = check_cell_around(board,JOUEUR_CASE)
 
-    return 20 * around_adversary_value - 40 * around_player - 35*manthann_distance
+    return 100 * around_adversary_value - 200 * around_player - 35*manthann_distance
 
 def minmax(node, depth, alpha, beta, maximizing_player,board):
     global minmax_board
@@ -169,6 +170,7 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
         if(not maximizing_player):
             node.value = evaluate_board(board,IA_CASE)
         else:
+            print(board)
             node.value = evaluate_board(board,JOUEUR_CASE)
         #print("DEPTH====0")
         return node.value
@@ -232,8 +234,7 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                 node.child_count += 1
                 ## Chaque nouvelle evaluation minmax aura son propre plateau de jeu (Noeud si on veut
                 evaluation = minmax(child_node, depth - 1, alpha, beta, True,np.copy(new_board_with_block) )
-                print("Apres appel recursif")
-                print(board)
+
                 new_board_with_block=[]
                 min_eval = min(min_eval, evaluation)
                 beta = min(beta, evaluation)
