@@ -7,7 +7,7 @@ WALL_CASE=-1
 
 
 
-board=[]
+board_old=[]
 minmax_board=[]
 
 class Node():
@@ -22,7 +22,7 @@ class Node():
         self.child_count=len(self.child_nodes)
 
 ### Fonction peut être utiliser pour Joueur et IA
-def check_cell_around(PLAYER_TYPE):
+def check_cell_around(board,PLAYER_TYPE):
     pl_pos = np.array(np.where(board == PLAYER_TYPE))
     pl_pos = [pl_pos[1][0] , pl_pos[0][0] ]
     x=pl_pos[0]
@@ -54,7 +54,7 @@ def check_cell_around(PLAYER_TYPE):
                  board[y+1][x-1]+ board[y+1][x]+ board[y+1][x+1] )
 
 def make_move(board,move,PLAYER_TYPE):
-    move_board = board#np.array( np.where(board == PLAYER_TYPE, FREE_CASE, board) )
+    move_board = np.copy(board)#np.array( np.where(board == PLAYER_TYPE, FREE_CASE, board) )
     old_position=np.array(np.where(board==PLAYER_TYPE))
     move_board[old_position[0][0],old_position[1][0]]=FREE_CASE
     move_board[move[0], move[1]] = PLAYER_TYPE
@@ -62,7 +62,7 @@ def make_move(board,move,PLAYER_TYPE):
 
 def place_block(board,block):
     # ajoute le block
-    block_board=board
+    block_board=np.copy(board)
     block_board[block[0], block[1]] = WALL_CASE
     return block_board
 
@@ -143,12 +143,12 @@ def evaluate_board(board,PLAYER_TYPE):
 
     if(PLAYER_TYPE==IA_CASE):
         # retourne le nombre de case autour du joueur
-        around_adversary_value = check_cell_around(JOUEUR_CASE)
-        around_player = check_cell_around(IA_CASE)
+        around_adversary_value = check_cell_around(board,JOUEUR_CASE)
+        around_player = check_cell_around(board,IA_CASE)
 
     else:
-        around_adversary_value = check_cell_around(IA_CASE)
-        around_player = check_cell_around(JOUEUR_CASE)
+        around_adversary_value = check_cell_around(board,IA_CASE)
+        around_player = check_cell_around(board,JOUEUR_CASE)
 
     return 20 * around_adversary_value - 40 * around_player - 35*manthann_distance
 
@@ -166,7 +166,7 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
     new_board=[]
     ### Cas 1: Profondeur==0 --> recursion finale, retour de la pile
     if depth == 0:
-        if(maximizing_player):
+        if(not maximizing_player):
             node.value = evaluate_board(board,IA_CASE)
         else:
             node.value = evaluate_board(board,JOUEUR_CASE)
@@ -187,17 +187,19 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
             block_list_count=block_list_count+1
             blocks_list=blocks[block_list_count]
 
-            new_board=board
+            new_board=np.copy(board)
             new_board = make_move(board, move, IA_CASE)
             # On prend un wall_case pour l'associer au mouvement
             for block in blocks_list:
                 new_board_with_block=new_board
                 new_board_with_block = place_block(new_board, block)
+
                 child_node = Node(0)  # Create a new child node
                 node.child_nodes.append(child_node)
                 node.child_count += 1
+
                 ## Boucle de recursion
-                evaluation = minmax(child_node, depth - 1, alpha, beta, False,new_board_with_block)
+                evaluation = minmax(child_node, depth - 1, alpha, beta, False,np.copy(new_board_with_block))
                 max_eval = max(max_eval, evaluation)
                 alpha = max(alpha, evaluation)
                 #optimisation alpha beta
@@ -219,16 +221,20 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
             block_list_count=block_list_count+1
             blocks_list=blocks[block_list_count]
 
-            new_board=board
+            new_board=np.copy(board)
             new_board = make_move(board, move,JOUEUR_CASE)
             for block in blocks_list:
                 new_board_with_block = new_board
                 new_board_with_block = place_block(new_board, block)
+
                 child_node = Node(0)  # Create a new child node
                 node.child_nodes.append(child_node)
                 node.child_count += 1
                 ## Chaque nouvelle evaluation minmax aura son propre plateau de jeu (Noeud si on veut
-                evaluation = minmax(child_node, depth - 1, alpha, beta, True,new_board_with_block)
+                evaluation = minmax(child_node, depth - 1, alpha, beta, True,np.copy(new_board_with_block) )
+                print("Apres appel recursif")
+                print(board)
+                new_board_with_block=[]
                 min_eval = min(min_eval, evaluation)
                 beta = min(beta, evaluation)
                 if beta <= alpha:
