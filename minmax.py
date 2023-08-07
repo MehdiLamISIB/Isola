@@ -69,7 +69,6 @@ def place_block(board,block):
 def generate_moves_and_blocks(board, PLAYER_TYPE):
     moves = []
     blocks = []
-
     # Les directions que peut faire l'IA ou le joueur
     directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
     pl_pos = np.array(np.where(board == PLAYER_TYPE))
@@ -103,6 +102,7 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
         move_board=make_move(board, move, PLAYER_TYPE)
         # Ajoute tout les positions des cellules vides (endroit pour bloquer)
         empty_cells=np.array(np.where(move_board == FREE_CASE) ).T
+
         #[ [y,x],[y1,x1], .... ]
         #empty_cells=[  [empty_cells[0][i],empty_cells[1][i]]  for i in range(len(empty_cells[0])) ]
         blocks.append(empty_cells.tolist())
@@ -170,7 +170,6 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
         if(not maximizing_player):
             node.value = evaluate_board(board,IA_CASE)
         else:
-            print(board)
             node.value = evaluate_board(board,JOUEUR_CASE)
         #print("DEPTH====0")
         return node.value
@@ -184,16 +183,15 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
         moves, blocks = generate_moves_and_blocks(board,IA_CASE)
         # D'abord le joueur bouge, ce qui crée un nouveau plateau pour bloquer ensuite
         block_list_count=0
-        for move in moves:
+        for move in range(len(moves)):
             ## on prend la liste des WALL_CASE disponible pour ce mouvement !!!!!!!
-            block_list_count=block_list_count+1
-            blocks_list=blocks[block_list_count]
+            blocks_list=blocks[move]
 
             new_board=np.copy(board)
-            new_board = make_move(board, move, IA_CASE)
+            new_board = make_move(board, moves[move], IA_CASE)
             # On prend un wall_case pour l'associer au mouvement
             for block in blocks_list:
-                new_board_with_block=new_board
+                new_board_with_block = np.copy(new_board)
                 new_board_with_block = place_block(new_board, block)
 
                 child_node = Node(0)  # Create a new child node
@@ -219,14 +217,13 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
         moves, blocks = generate_moves_and_blocks(board, JOUEUR_CASE)
         block_list_count = 0
 
-        for move in moves:
-            block_list_count=block_list_count+1
-            blocks_list=blocks[block_list_count]
+        for move in range(len(moves)):
+            blocks_list=blocks[move]
 
             new_board=np.copy(board)
-            new_board = make_move(board, move,JOUEUR_CASE)
+            new_board = make_move(board, moves[move],JOUEUR_CASE)
             for block in blocks_list:
-                new_board_with_block = new_board
+                new_board_with_block = np.copy(new_board)
                 new_board_with_block = place_block(new_board, block)
 
                 child_node = Node(0)  # Create a new child node
