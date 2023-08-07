@@ -219,6 +219,11 @@ def isola_game():
 
 #show_board()
 
+
+
+"""
+Game is running but issue with WALL_CASE of IA not showing up on the game table
+"""
 isola_game()
 
 
