@@ -164,8 +164,8 @@ def evaluate_board(board,PLAYER_TYPE):
         around_adversary_value = check_cell_around(board,IA_CASE)
         around_player = check_cell_around(board,JOUEUR_CASE)
 
-    return 100 * around_adversary_value - 200 * around_player - 35*manthann_distance
-
+    #return 100 * around_adversary_value - 200 * around_player - 35*manthann_distance
+    return 100*around_adversary_value
 def minmax(node, depth, alpha, beta, maximizing_player,board):
     global minmax_board
     """

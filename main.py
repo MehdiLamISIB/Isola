@@ -81,7 +81,7 @@ def move_player():
                 print("Case y en dehors du plateau !!!!")
                 continue
             print("cooord ---> ",coord)
-            print("player_pos --->", player_pos)
+            #print("player_pos --->", player_pos)
             if(
                     (not (coord[0]==player_pos[0] and coord[1]==player_pos[1] ) )
                 and (
@@ -124,7 +124,7 @@ def block_player():
         if(coord[0].isdigit() and coord[1].isdigit()):
             coord=[int(coord[1]),int(coord[0])]
             print("cooord ---> ",coord)
-            print("player_pos --->", player_pos)
+            #print("player_pos --->", player_pos)
 
             if(coord[0]>7 or coord[0]<1):
                 print("Case x en dehors du plateau !!!!")
@@ -148,10 +148,6 @@ def Player_turn():
     move_player()
     block_player()
 
-
-
-
-
 #A faire
 def Ia_turn():
     global board
@@ -163,7 +159,6 @@ def Ia_turn():
 
 
     board=minmax.minmax_board
-    print(board)
 
 def check_winner(PLAYER_TYPE):
     pl_pos = np.array(np.where(board == PLAYER_TYPE)).reshape((2, 1))
