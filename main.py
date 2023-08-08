@@ -148,7 +148,6 @@ def Player_turn():
     move_player()
     block_player()
 
-#A faire
 def Ia_turn():
     global board
 

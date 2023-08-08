@@ -90,9 +90,8 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
         # je vérifie le mouvement et attribue la liste des endroit qui peuvent être bloqué
         move_board = make_move(board, [pl_pos[0] + y, pl_pos[1] + x], PLAYER_TYPE)
         empty_cells = np.array(np.where(move_board == FREE_CASE)).T
+
         blocks.append(empty_cells.tolist())
-
-
     """
     Pour chaque move, on aura un block associe
     
@@ -103,22 +102,6 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
     |   |
     |   tableau qui présente les endroit libre pour bloque lies au mouvement fait dans le même tour (car 2 choix a faire dans un même tour)
     |---|
-    """
-
-
-    """
-    
-    for move in moves:
-        # on enleve l'ancienne poisiton
-        # et on la replace par la nouvelle position
-        move_board=make_move(board, move, PLAYER_TYPE)
-        # Ajoute tout les positions des cellules vides (endroit pour bloquer)
-        empty_cells=np.array(np.where(move_board == FREE_CASE) ).T
-
-        #[ [y,x],[y1,x1], .... ]
-        #empty_cells=[  [empty_cells[0][i],empty_cells[1][i]]  for i in range(len(empty_cells[0])) ]
-        blocks.append(empty_cells.tolist())
-        move_board=[]
     """
     return moves, blocks
 
@@ -165,7 +148,8 @@ def evaluate_board(board,PLAYER_TYPE):
         around_player = check_cell_around(board,JOUEUR_CASE)
 
     #return 100 * around_adversary_value - 200 * around_player - 35*manthann_distance
-    return 100*around_adversary_value
+    return 5*manthann_distance+20*around_adversary_value-10*around_player
+
 def minmax(node, depth, alpha, beta, maximizing_player,board):
     global minmax_board
     """
@@ -219,6 +203,7 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                     break  # Beta cut-off
             #print("MAX MAX")
         minmax_board=np.array(new_board_with_block)
+        #print(minmax_board)
         return max_eval
     else:
         ### Cas 3:Minimiser --->
