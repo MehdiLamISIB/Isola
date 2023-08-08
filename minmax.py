@@ -127,7 +127,6 @@ def evaluate_board(board,PLAYER_TYPE):
     # Simple heuristic: count the number of empty cells
     #empty_cells = sum(row.count(0) for row in board)
     #return empty_cells
-
     """
     Test fonction d'evaluation
     --> on essaie d'entourer l'adversaire le plus rapidement
@@ -150,7 +149,7 @@ def evaluate_board(board,PLAYER_TYPE):
 
     #return 100 * around_adversary_value - 200 * around_player - 35*manthann_distance
     return 5*manthann_distance+20*around_adversary_value-10*around_player
-    #return rd.random()*100
+
 def minmax(node, depth, alpha, beta, maximizing_player,board):
     global minmax_board
     """
@@ -200,11 +199,11 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                 alpha = max(alpha, max_eval)
                 #optimisation alpha beta
                 if beta <= alpha:
-                    minmax_board = np.array(new_board_with_block)
-                    return beta  # Beta cut-off
+                    return alpha
+                    break # Alpha cut-off
 
-        #minmax_board = np.array(new_board_with_block)
-        #return max_eval
+        minmax_board = np.array(new_board_with_block)
+        return max_eval
     else:
         ### Cas 3:Minimiser --->
         """
@@ -215,8 +214,6 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
 
         for move in range(len(moves)):
             blocks_list=blocks[move]
-
-            #new_board=np.array(board)
             new_board = make_move(board, moves[move],JOUEUR_CASE)
             for block in blocks_list:
                 new_board_with_block = np.array(new_board)
@@ -231,8 +228,8 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                 min_eval = min(min_eval, evaluation)
                 beta = min(beta, min_eval)
                 if beta <= alpha:
-                    minmax_board = np.array(new_board_with_block)
-                    return alpha  # Alpha cut-off
-        #minmax_board = np.array(new_board_with_block)
+                    break # Alpha cut-off
+
+        minmax_board = np.array(new_board_with_block)
         #print("MIN MIN")
-        #return min_eval
+        return min_eval
