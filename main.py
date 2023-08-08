@@ -154,9 +154,10 @@ def Ia_turn():
     minmax.board_old=board
     root=minmax.Node(0)
 
-    minmax.minmax(root, depth=3, alpha=float('-inf'), beta=float('inf'), maximizing_player=True,board=minmax.board_old)
+    root.value=minmax.minmax(root, depth=minmax.DEPTH_MAX, alpha=float('-inf'), beta=float('inf'), maximizing_player=True,board=minmax.board_old)
 
-
+    print("ROOT BOARD")
+    print(root.board)
     board=minmax.minmax_board
 
 def check_winner(PLAYER_TYPE):

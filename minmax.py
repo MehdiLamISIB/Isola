@@ -1,11 +1,11 @@
 import numpy as np
-
+import random as rd
 FREE_CASE=0
 JOUEUR_CASE=1
 IA_CASE=2
 WALL_CASE=-1
 
-
+DEPTH_MAX=3
 
 board_old=[]
 minmax_board=[]
@@ -16,6 +16,7 @@ class Node():
         self.value = value
         self.child_nodes=[]
         self.child_count=0
+        self.board=[]
     def AddNode(self,node):
 
         self.child_nodes.append(node)
@@ -148,8 +149,8 @@ def evaluate_board(board,PLAYER_TYPE):
         around_player = check_cell_around(board,JOUEUR_CASE)
 
     #return 100 * around_adversary_value - 200 * around_player - 35*manthann_distance
-    return 5*manthann_distance+20*around_adversary_value-10*around_player
-
+    #return 5*manthann_distance+20*around_adversary_value-10*around_player
+    return rd.random()*100
 def minmax(node, depth, alpha, beta, maximizing_player,board):
     global minmax_board
     """
@@ -197,13 +198,13 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                 ## Boucle de recursion
                 evaluation = minmax(child_node, depth - 1, alpha, beta, False,np.array(new_board_with_block))
                 max_eval = max(max_eval, evaluation)
-                alpha = max(alpha, evaluation)
+                alpha = max(alpha, max_eval)
                 #optimisation alpha beta
                 if beta <= alpha:
                     break  # Beta cut-off
             #print("MAX MAX")
-        minmax_board=np.array(new_board_with_block)
-        #print(minmax_board)
+
+        minmax_board = np.array(new_board_with_block)
         return max_eval
     else:
         ### Cas 3:Minimiser --->
@@ -230,9 +231,9 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
 
 
                 min_eval = min(min_eval, evaluation)
-                beta = min(beta, evaluation)
+                beta = min(beta, min_eval)
                 if beta <= alpha:
                     break  # Alpha cut-off
-            #print("MIN MIN")
         minmax_board = np.array(new_board_with_block)
+            #print("MIN MIN")
         return min_eval
