@@ -169,7 +169,6 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
             node.value = evaluate_board(board,IA_CASE)
         else:
             node.value = evaluate_board(board,JOUEUR_CASE)
-        #print("DEPTH====0")
         return node.value
     ### Cas 2: Maximiser --->
     """
