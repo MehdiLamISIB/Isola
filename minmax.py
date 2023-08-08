@@ -176,8 +176,8 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
     :param maximizing_player: est ce qu'on maximise ?
     :return:
     """
-    #new_board_with_block=[]
-    #new_board=[]
+    new_board_with_block=[]
+    new_board=[]
     ### Cas 1: Profondeur==0 --> recursion finale, retour de la pile
     if depth == 0:
         if(not maximizing_player):
@@ -199,7 +199,7 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
             ## on prend la liste des WALL_CASE disponible pour ce mouvement !!!!!!!
             blocks_list=blocks[move]
 
-            new_board=np.array(board)
+            #new_board=np.array(board)
             new_board = make_move(board, moves[move], IA_CASE)
             # On prend un wall_case pour l'associer au mouvement
             for block in blocks_list:
@@ -218,7 +218,7 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                 if beta <= alpha:
                     break  # Beta cut-off
             #print("MAX MAX")
-        minmax_board=np.copy(board)
+        minmax_board=np.array(new_board_with_block)
         return max_eval
     else:
         ### Cas 3:Minimiser --->
@@ -231,7 +231,7 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
         for move in range(len(moves)):
             blocks_list=blocks[move]
 
-            new_board=np.array(board)
+            #new_board=np.array(board)
             new_board = make_move(board, moves[move],JOUEUR_CASE)
             for block in blocks_list:
                 new_board_with_block = np.array(new_board)
@@ -249,5 +249,5 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                 if beta <= alpha:
                     break  # Alpha cut-off
             #print("MIN MIN")
-        minmax_board = np.copy(board)
+        minmax_board = np.array(new_board_with_block)
         return min_eval
