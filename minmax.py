@@ -85,6 +85,14 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
         if(board[pl_pos[0] + y][pl_pos[1] + x]!=FREE_CASE):
             continue
         moves.append([pl_pos[0] + y, pl_pos[1] + x])
+
+        # Pour optimiser, et eviter de reutiliser 2 fois la même boucle,
+        # je vérifie le mouvement et attribue la liste des endroit qui peuvent être bloqué
+        move_board = make_move(board, [pl_pos[0] + y, pl_pos[1] + x], PLAYER_TYPE)
+        empty_cells = np.array(np.where(move_board == FREE_CASE)).T
+        blocks.append(empty_cells.tolist())
+
+
     """
     Pour chaque move, on aura un block associe
     
@@ -96,6 +104,10 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
     |   tableau qui présente les endroit libre pour bloque lies au mouvement fait dans le même tour (car 2 choix a faire dans un même tour)
     |---|
     """
+
+
+    """
+    
     for move in moves:
         # on enleve l'ancienne poisiton
         # et on la replace par la nouvelle position
@@ -107,6 +119,7 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
         #empty_cells=[  [empty_cells[0][i],empty_cells[1][i]]  for i in range(len(empty_cells[0])) ]
         blocks.append(empty_cells.tolist())
         move_board=[]
+    """
     return moves, blocks
 
 """
@@ -163,8 +176,8 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
     :param maximizing_player: est ce qu'on maximise ?
     :return:
     """
-    new_board_with_block=[]
-    new_board=[]
+    #new_board_with_block=[]
+    #new_board=[]
     ### Cas 1: Profondeur==0 --> recursion finale, retour de la pile
     if depth == 0:
         if(not maximizing_player):
@@ -182,7 +195,6 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
         max_eval = float('-inf')
         moves, blocks = generate_moves_and_blocks(board,IA_CASE)
         # D'abord le joueur bouge, ce qui crée un nouveau plateau pour bloquer ensuite
-        block_list_count=0
         for move in range(len(moves)):
             ## on prend la liste des WALL_CASE disponible pour ce mouvement !!!!!!!
             blocks_list=blocks[move]
@@ -206,7 +218,7 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                 if beta <= alpha:
                     break  # Beta cut-off
             #print("MAX MAX")
-            minmax_board=new_board
+        minmax_board=np.copy(board)
         return max_eval
     else:
         ### Cas 3:Minimiser --->
@@ -215,7 +227,6 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
         """
         min_eval = float('inf')
         moves, blocks = generate_moves_and_blocks(board, JOUEUR_CASE)
-        block_list_count = 0
 
         for move in range(len(moves)):
             blocks_list=blocks[move]
@@ -232,11 +243,11 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                 ## Chaque nouvelle evaluation minmax aura son propre plateau de jeu (Noeud si on veut
                 evaluation = minmax(child_node, depth - 1, alpha, beta, True,np.copy(new_board_with_block) )
 
-                new_board_with_block=[]
+
                 min_eval = min(min_eval, evaluation)
                 beta = min(beta, evaluation)
                 if beta <= alpha:
                     break  # Alpha cut-off
             #print("MIN MIN")
-            minmax_board = new_board
+        minmax_board = np.copy(board)
         return min_eval

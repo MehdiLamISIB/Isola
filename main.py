@@ -221,6 +221,7 @@ def isola_game():
 
 
 
+
 """
 Game is running but issue with WALL_CASE of IA not showing up on the game table
 """
