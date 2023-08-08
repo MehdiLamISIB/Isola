@@ -203,7 +203,6 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                 if beta <= alpha:
                     break  # Beta cut-off
             #print("MAX MAX")
-
         minmax_board = np.array(new_board_with_block)
         return max_eval
     else:
