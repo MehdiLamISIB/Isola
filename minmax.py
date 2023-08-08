@@ -149,8 +149,8 @@ def evaluate_board(board,PLAYER_TYPE):
         around_player = check_cell_around(board,JOUEUR_CASE)
 
     #return 100 * around_adversary_value - 200 * around_player - 35*manthann_distance
-    #return 5*manthann_distance+20*around_adversary_value-10*around_player
-    return rd.random()*100
+    return 5*manthann_distance+20*around_adversary_value-10*around_player
+    #return rd.random()*100
 def minmax(node, depth, alpha, beta, maximizing_player,board):
     global minmax_board
     """
@@ -200,10 +200,11 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                 alpha = max(alpha, max_eval)
                 #optimisation alpha beta
                 if beta <= alpha:
-                    break  # Beta cut-off
-            #print("MAX MAX")
-        minmax_board = np.array(new_board_with_block)
-        return max_eval
+                    minmax_board = np.array(new_board_with_block)
+                    return beta  # Beta cut-off
+
+        #minmax_board = np.array(new_board_with_block)
+        #return max_eval
     else:
         ### Cas 3:Minimiser --->
         """
@@ -227,11 +228,11 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                 ## Chaque nouvelle evaluation minmax aura son propre plateau de jeu (Noeud si on veut
                 evaluation = minmax(child_node, depth - 1, alpha, beta, True,np.array(new_board_with_block) )
 
-
                 min_eval = min(min_eval, evaluation)
                 beta = min(beta, min_eval)
                 if beta <= alpha:
-                    break  # Alpha cut-off
-        minmax_board = np.array(new_board_with_block)
-            #print("MIN MIN")
-        return min_eval
+                    minmax_board = np.array(new_board_with_block)
+                    return alpha  # Alpha cut-off
+        #minmax_board = np.array(new_board_with_block)
+        #print("MIN MIN")
+        #return min_eval
