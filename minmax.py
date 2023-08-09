@@ -148,7 +148,8 @@ def evaluate_board(board,PLAYER_TYPE):
         around_player = check_cell_around(board,JOUEUR_CASE)
 
     #return 100 * around_adversary_value - 200 * around_player - 35*manthann_distance
-    return 5*manthann_distance+20*around_adversary_value-10*around_player
+    return 5*manthann_distance+20*around_adversary_value+100*around_player+rd.random()*50
+    #return (around_player-3*around_adversary_value)*np.sum(np.where(board==FREE_CASE))
 
 def minmax(node, depth, alpha, beta, maximizing_player,board):
     global minmax_board
@@ -165,10 +166,11 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
     ### Cas 1: Profondeur==0 --> recursion finale, retour de la pile
     if depth == 0:
         if(not maximizing_player):
-            node.value = evaluate_board(board,IA_CASE)
+            node.value = evaluate_board(np.array(board),IA_CASE)
+            return node.value
         else:
-            node.value = evaluate_board(board,JOUEUR_CASE)
-        return node.value
+            node.value = evaluate_board(np.array(board),JOUEUR_CASE)
+            return node.value
     ### Cas 2: Maximiser --->
     """
     L'algoritme itere tous les cas possible
@@ -181,8 +183,6 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
         for move in range(len(moves)):
             ## on prend la liste des WALL_CASE disponible pour ce mouvement !!!!!!!
             blocks_list=blocks[move]
-
-            #new_board=np.array(board)
             new_board = make_move(board, moves[move], IA_CASE)
             # On prend un wall_case pour l'associer au mouvement
             for block in blocks_list:
@@ -192,18 +192,20 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                 child_node = Node(0)  # Create a new child node
                 node.child_nodes.append(child_node)
                 node.child_count += 1
-
                 ## Boucle de recursion
-                evaluation = minmax(child_node, depth - 1, alpha, beta, False,np.array(new_board_with_block))
+
+                evaluation = minmax(child_node, depth - 1, alpha, beta, False,new_board_with_block)
                 max_eval = max(max_eval, evaluation)
                 alpha = max(alpha, max_eval)
                 #optimisation alpha beta
                 if beta <= alpha:
-                    return alpha
                     break # Alpha cut-off
-
+            if beta <= alpha:
+                break
         minmax_board = np.array(new_board_with_block)
+        print(depth)
         return max_eval
+
     else:
         ### Cas 3:Minimiser --->
         """
@@ -223,13 +225,15 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                 node.child_nodes.append(child_node)
                 node.child_count += 1
                 ## Chaque nouvelle evaluation minmax aura son propre plateau de jeu (Noeud si on veut
-                evaluation = minmax(child_node, depth - 1, alpha, beta, True,np.array(new_board_with_block) )
 
+                evaluation = minmax(child_node, depth - 1, alpha, beta, True,new_board_with_block )
                 min_eval = min(min_eval, evaluation)
                 beta = min(beta, min_eval)
                 if beta <= alpha:
                     break # Alpha cut-off
-
+            if beta <= alpha:
+                break
+        print(depth)
         minmax_board = np.array(new_board_with_block)
-        #print("MIN MIN")
         return min_eval
+
