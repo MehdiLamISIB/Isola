@@ -148,7 +148,8 @@ def evaluate_board(board,PLAYER_TYPE):
     #return 5*manthann_distance+20*around_adversary_value+100*around_player+rd.random()*50
     return (around_player-3*around_adversary_value)*np.sum(np.where(board==FREE_CASE))
 
-def minmax(node, depth, alpha, beta, maximizing_player,board):
+
+def minmax(depth, alpha, beta, maximizing_player,board):
     global minmax_board
     """
     :param node: noeud racine
@@ -163,11 +164,9 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
     ### Cas 1: Profondeur==0 --> recursion finale, retour de la pile
     if depth == 0:
         if(not maximizing_player):
-            node.value = evaluate_board(np.array(board),IA_CASE)
-            return node.value
+            return evaluate_board(np.array(board),IA_CASE)
         else:
-            node.value = evaluate_board(np.array(board),JOUEUR_CASE)
-            return node.value
+            return evaluate_board(np.array(board),JOUEUR_CASE)
     ### Cas 2: Maximiser --->
     """
     L'algoritme itere tous les cas possible
@@ -186,12 +185,7 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                 new_board_with_block = np.array(new_board)
                 new_board_with_block = place_block(new_board, block)
 
-                child_node = Node(0)  # Create a new child node
-                node.child_nodes.append(child_node)
-                node.child_count += 1
-                ## Boucle de recursion
-
-                evaluation = minmax(child_node, depth - 1, alpha, beta, False,new_board_with_block)
+                evaluation = minmax(depth - 1, alpha, beta, False,new_board_with_block)
 
                 max_eval = max(max_eval, evaluation)
                 alpha = max(alpha, max_eval)
@@ -218,12 +212,7 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                 new_board_with_block = np.array(new_board)
                 new_board_with_block = place_block(new_board, block)
 
-                child_node = Node(0)  # Create a new child node
-                node.child_nodes.append(child_node)
-                node.child_count += 1
-                ## Chaque nouvelle evaluation minmax aura son propre plateau de jeu (Noeud si on veut
-
-                evaluation = minmax(child_node, depth - 1, alpha, beta, True,new_board_with_block )
+                evaluation = minmax(depth - 1, alpha, beta, True,new_board_with_block )
                 min_eval = min(min_eval, evaluation)
                 beta = min(beta, min_eval)
                 if beta <= alpha:

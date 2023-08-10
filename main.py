@@ -152,11 +152,11 @@ def Ia_turn():
     global board
 
     minmax.board_old=np.array(board)
-    root=minmax.Node(0)
+    #root=minmax.Node(0)
 
 
 
-    minmax.minmax(root, depth=minmax.DEPTH_MAX, alpha=float('-inf'), beta=float('inf'), maximizing_player=True,board=minmax.board_old)
+    minmax.minmax(depth=minmax.DEPTH_MAX, alpha=float('-inf'), beta=float('inf'), maximizing_player=True,board=minmax.board_old)
 
 
     board=minmax.minmax_board
