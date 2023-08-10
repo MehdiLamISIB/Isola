@@ -145,8 +145,7 @@ def evaluate_board(board,PLAYER_TYPE):
         around_player = check_cell_around(board,JOUEUR_CASE)
 
     # ---->                        nmbr cell        nmbrl cell
-    return 50 - manthann_distance*(8-around_player) + 50*(8-around_adversary)
-    #return 100 * around_adversary_value - 200 * around_player - 35*manthann_distance
+    #return 100 - manthann_distance + (8-around_player) - (8-around_adversary)
     #return (around_player-3*around_adversary_value)*np.sum(np.where(board==FREE_CASE))
 
 def minmax(depth, alpha, beta, maximizing_player,board):
