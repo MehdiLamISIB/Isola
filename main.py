@@ -63,9 +63,9 @@ def move_player():
     while(not position_accepted):
         # permet de transformer [[1],[1]] en [1,2]
         player_pos = np.array(np.where(board == JOUEUR_CASE)).reshape((2, 1))
-        player_pos=[player_pos[0][0]+1,player_pos[1][0]+1]
-        print("Votre position actuelle ({1},{0})".format(player_pos[0],player_pos[1]))
-        move_choose = str(input("choix x,y --> "))
+        player_pos=[player_pos[0][0],player_pos[1][0]]
+        print("Votre position actuelle ({0},{1})".format(player_pos[0],player_pos[1]))
+        move_choose = str(input("choix y,x --> "))
         coord = list(move_choose.split(','))
         # pour la position on doit :
         # - verifier si entier
@@ -73,28 +73,22 @@ def move_player():
         # - verifier si position autour
         # - a la fin verifier si prochaine position est un mur ou IA, pour éviter des soucis
         if(coord[0].isdigit() and coord[1].isdigit()):
-            coord=[int(coord[1]),int(coord[0])]
-            if(coord[0]>7 or coord[0]<1):
+            coord=[int(coord[0]),int(coord[1])]
+            if(coord[0]>7 or coord[0]<0):
                 print("Case x en dehors du plateau !!!!")
                 continue
-            if(coord[1]>7 or coord[1]<1):
+            if(coord[1]>7 or coord[1]<0):
                 print("Case y en dehors du plateau !!!!")
                 continue
             print("cooord ---> ",coord)
-            #print("player_pos --->", player_pos)
-            if(
-                    (not (coord[0]==player_pos[0] and coord[1]==player_pos[1] ) )
-                and (
-                    (coord[0] == (player_pos[0] - 1) or coord[0] == (player_pos[0] + 1) or coord[0]==player_pos[0] )
-                        or
-                    (coord[1] == (player_pos[1] - 1) or coord[1] == (player_pos[1] + 1) or coord[1]==player_pos[1] )
-                    )
-            ):
-
-                if(board[coord[0]-1][coord[1]-1]==IA_CASE or board[coord[0]-1][coord[1]-1]==WALL_CASE):
+            directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
+            coord_tuple=(coord[0]-player_pos[0],coord[1]-player_pos[1])
+            print("le coord tuple ---> ",coord_tuple)
+            if( coord_tuple in directions):
+                if(board[coord[0]][coord[1]]!=FREE_CASE):
                     print("Position occupé !!!!!")
                     continue
-                board[coord[0]-1][coord[1]-1]=JOUEUR_CASE
+                board[coord[0]][coord[1]]=JOUEUR_CASE
                 board[player_pos[0]-1][player_pos[1]-1]=FREE_CASE
                 position_accepted=True
                 continue
@@ -114,15 +108,15 @@ def block_player():
     while(not position_accepted):
         # permet de transformer [[1],[1]] en [1,2]
         player_pos = np.array(np.where(board == JOUEUR_CASE)).reshape((2, 1))
-        player_pos=[player_pos[0][0]+1,player_pos[1][0]+1]
-        print("Votre position actuelle ({1},{0})".format(player_pos[0],player_pos[1]))
-        move_choose = str(input("choix x,y --> "))
+        player_pos=[player_pos[0][0],player_pos[1][0]]
+        print("Votre position actuelle ({0},{1})".format(player_pos[0],player_pos[1]))
+        move_choose = str(input("choix y,x --> "))
         coord = list(move_choose.split(','))
         # pour la position on doit :
         # - verifier si entier
         # - verifier si prochaine position est un mur ou IA, pour éviter des soucis
         if(coord[0].isdigit() and coord[1].isdigit()):
-            coord=[int(coord[1]),int(coord[0])]
+            coord=[int(coord[0]),int(coord[1])]
             print("cooord ---> ",coord)
             #print("player_pos --->", player_pos)
 
@@ -133,8 +127,8 @@ def block_player():
                 print("Case y en dehors du plateau !!!!")
                 continue
 
-            if(board[coord[0]-1][coord[1]-1]==FREE_CASE):
-                board[coord[0]-1][coord[1]-1]=WALL_CASE
+            if(board[coord[0]][coord[1]]==FREE_CASE):
+                board[coord[0]][coord[1]]=WALL_CASE
                 position_accepted=True
                 continue
             else:
