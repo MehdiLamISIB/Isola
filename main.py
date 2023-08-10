@@ -117,7 +117,7 @@ def block_player():
         # - verifier si prochaine position est un mur ou IA, pour éviter des soucis
         if(coord[0].isdigit() and coord[1].isdigit()):
             coord=[int(coord[0]),int(coord[1])]
-            print("cooord ---> ",coord)
+            #print("cooord ---> ",coord)
             #print("player_pos --->", player_pos)
 
             if(coord[0]>7 or coord[0]<0):
