@@ -5,7 +5,7 @@ JOUEUR_CASE=1
 IA_CASE=2
 WALL_CASE=-1
 
-DEPTH_MAX=3
+DEPTH_MAX=1
 
 board_old=[]
 minmax_board=[]
@@ -144,13 +144,16 @@ def evaluate_board(board,PLAYER_TYPE):
         around_adversary_value = check_cell_around(board,IA_CASE)
         around_player = check_cell_around(board,JOUEUR_CASE)
 
-    #return 100 * around_adversary_value - 200 * around_player - 35*manthann_distance
-    #return 5*manthann_distance+20*around_adversary_value+100*around_player+rd.random()*50
-    return (around_player-3*around_adversary_value)*np.sum(np.where(board==FREE_CASE))
+    return 100 * around_adversary_value - 200 * around_player - 35*manthann_distance
+    #return (around_player-3*around_adversary_value)*np.sum(np.where(board==FREE_CASE))
 
+
+counter_val=0
 
 def minmax(depth, alpha, beta, maximizing_player,board):
-    global minmax_board
+    global minmax_board,counter_val
+    #print(depth, counter_val)
+    counter_val=counter_val+1
     """
     :param node: noeud racine
     :param depth: profondeur
@@ -188,15 +191,17 @@ def minmax(depth, alpha, beta, maximizing_player,board):
                 new_board_with_block = place_block(new_board, block)
 
                 evaluation = minmax(depth + 1, alpha, beta, False,new_board_with_block)
-
-                best_eval = max(best_eval, evaluation)
+                #best_eval = max(best_eval, evaluation)
+                if(best_eval<evaluation):
+                    best_eval=evaluation
+                    minmax_board = np.array(new_board_with_block)
                 alpha = max(alpha, best_eval)
                 #optimisation alpha beta
                 if beta <= alpha:
                     break # Alpha cut-off
             if beta <= alpha:
                 break
-        minmax_board = np.array(new_board_with_block)
+
         return best_eval
 
     else:
