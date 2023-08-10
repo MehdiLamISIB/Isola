@@ -74,8 +74,6 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
     directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
     pl_pos = np.array(np.where(board == PLAYER_TYPE))
     pl_pos = [pl_pos[0][0], pl_pos[1][0]]
-
-
     # On verifie si ces mouvements sont possibles, si oui on les rajoutes dans la listes des mouvements
     # ici pour moves --> on a les coordonnées qui commence par 0 (0,0) est donc la position du corner supérieur gauche |
     for pos in directions:
@@ -86,7 +84,6 @@ def generate_moves_and_blocks(board, PLAYER_TYPE):
         if(board[pl_pos[0] + y][pl_pos[1] + x]!=FREE_CASE):
             continue
         moves.append([pl_pos[0] + y, pl_pos[1] + x])
-
         # Pour optimiser, et eviter de reutiliser 2 fois la même boucle,
         # je vérifie le mouvement et attribue la liste des endroit qui peuvent être bloqué
         move_board = make_move(board, [pl_pos[0] + y, pl_pos[1] + x], PLAYER_TYPE)
@@ -148,8 +145,8 @@ def evaluate_board(board,PLAYER_TYPE):
         around_player = check_cell_around(board,JOUEUR_CASE)
 
     #return 100 * around_adversary_value - 200 * around_player - 35*manthann_distance
-    return 5*manthann_distance+20*around_adversary_value+100*around_player+rd.random()*50
-    #return (around_player-3*around_adversary_value)*np.sum(np.where(board==FREE_CASE))
+    #return 5*manthann_distance+20*around_adversary_value+100*around_player+rd.random()*50
+    return (around_player-3*around_adversary_value)*np.sum(np.where(board==FREE_CASE))
 
 def minmax(node, depth, alpha, beta, maximizing_player,board):
     global minmax_board
@@ -161,8 +158,8 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
     :param maximizing_player: est ce qu'on maximise ?
     :return:
     """
-    new_board_with_block=[]
-    new_board=[]
+    #new_board_with_block=[]
+    #new_board=[]
     ### Cas 1: Profondeur==0 --> recursion finale, retour de la pile
     if depth == 0:
         if(not maximizing_player):
@@ -195,6 +192,7 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                 ## Boucle de recursion
 
                 evaluation = minmax(child_node, depth - 1, alpha, beta, False,new_board_with_block)
+
                 max_eval = max(max_eval, evaluation)
                 alpha = max(alpha, max_eval)
                 #optimisation alpha beta
@@ -203,7 +201,6 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
             if beta <= alpha:
                 break
         minmax_board = np.array(new_board_with_block)
-        print(depth)
         return max_eval
 
     else:
@@ -233,7 +230,6 @@ def minmax(node, depth, alpha, beta, maximizing_player,board):
                     break # Alpha cut-off
             if beta <= alpha:
                 break
-        print(depth)
         minmax_board = np.array(new_board_with_block)
         return min_eval
 

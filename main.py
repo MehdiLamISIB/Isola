@@ -151,7 +151,7 @@ def Player_turn():
 def Ia_turn():
     global board
 
-    minmax.board_old=board
+    minmax.board_old=np.array(board)
     root=minmax.Node(0)
 
 
