@@ -57,14 +57,14 @@ def show_board():
     print("-" * 21)
 def move_player():
     position_accepted = False
-    print("******************************")
-    print("| Phase choix de la position |")
+    print("******************************",end='')
+    print("| Phase choix de la position |",end='')
     print("******************************")
     while(not position_accepted):
         # permet de transformer [[1],[1]] en [1,2]
         player_pos = np.array(np.where(board == JOUEUR_CASE)).reshape((2, 1))
         player_pos=[player_pos[0][0],player_pos[1][0]]
-        print("Votre position actuelle ({0},{1})".format(player_pos[0],player_pos[1]))
+        print("Votre position actuelle ({0},{1}) ---- ".format(player_pos[0],player_pos[1]),end='')
         move_choose = str(input("choix y,x --> "))
         coord = list(move_choose.split(','))
         # pour la position on doit :
@@ -80,16 +80,16 @@ def move_player():
             if(coord[1]>7 or coord[1]<0):
                 print("Case y en dehors du plateau !!!!")
                 continue
-            print("cooord ---> ",coord)
+            #print("cooord ---> ",coord)
             directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
             coord_tuple=(coord[0]-player_pos[0],coord[1]-player_pos[1])
-            print("le coord tuple ---> ",coord_tuple)
+            #print("le coord tuple ---> ",coord_tuple)
             if( coord_tuple in directions):
                 if(board[coord[0]][coord[1]]!=FREE_CASE):
                     print("Position occupé !!!!!")
                     continue
                 board[coord[0]][coord[1]]=JOUEUR_CASE
-                board[player_pos[0]-1][player_pos[1]-1]=FREE_CASE
+                board[player_pos[0]][player_pos[1]]=FREE_CASE
                 position_accepted=True
                 continue
             else:
@@ -102,14 +102,14 @@ def move_player():
     ## position choisi maintenat on peut poser le mur
 def block_player():
     position_accepted = False
-    print("******************************")
-    print("| Phase choix position du mur |")
+    print("******************************",end='')
+    print("| Phase choix position du mur |",end='')
     print("******************************")
     while(not position_accepted):
         # permet de transformer [[1],[1]] en [1,2]
         player_pos = np.array(np.where(board == JOUEUR_CASE)).reshape((2, 1))
         player_pos=[player_pos[0][0],player_pos[1][0]]
-        print("Votre position actuelle ({0},{1})".format(player_pos[0],player_pos[1]))
+        print("Votre position actuelle ({0},{1}) ---- ".format(player_pos[0],player_pos[1]),end='')
         move_choose = str(input("choix y,x --> "))
         coord = list(move_choose.split(','))
         # pour la position on doit :
@@ -120,13 +120,12 @@ def block_player():
             print("cooord ---> ",coord)
             #print("player_pos --->", player_pos)
 
-            if(coord[0]>7 or coord[0]<1):
+            if(coord[0]>7 or coord[0]<0):
                 print("Case x en dehors du plateau !!!!")
                 continue
-            if(coord[1]>7 or coord[1]<1):
+            if(coord[1]>7 or coord[1]<0):
                 print("Case y en dehors du plateau !!!!")
                 continue
-
             if(board[coord[0]][coord[1]]==FREE_CASE):
                 board[coord[0]][coord[1]]=WALL_CASE
                 position_accepted=True
