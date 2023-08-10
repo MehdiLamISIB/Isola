@@ -5,7 +5,7 @@ JOUEUR_CASE=1
 IA_CASE=2
 WALL_CASE=-1
 
-DEPTH_MAX=2
+DEPTH_MAX=3
 
 board_old=[]
 minmax_board=[]
@@ -166,6 +166,7 @@ def minmax(depth, alpha, beta, maximizing_player,board):
     """
     #new_board_with_block=[]
     #new_board=[]
+    best_board=np.array(board)
     ### Cas 1: Profondeur==0 --> recursion finale, retour de la pile
     if(depth == DEPTH_MAX):
         value=0
@@ -195,7 +196,7 @@ def minmax(depth, alpha, beta, maximizing_player,board):
                 evaluation = minmax(depth + 1, alpha, beta, False,new_board_with_block)
                 #best_eval = max(best_eval, evaluation)
                 if(best_eval<evaluation):
-                    minmax_board = np.array(new_board_with_block)
+                    best_board=np.array(new_board_with_block)
                     best_eval=evaluation
                 alpha = max(alpha, best_eval)
                 #optimisation alpha beta
@@ -203,6 +204,7 @@ def minmax(depth, alpha, beta, maximizing_player,board):
                     break # Alpha cut-off
             if beta <= alpha:
                 break
+        minmax_board=best_board
         return best_eval
     else:
         ### Cas 3:Minimiser --->
@@ -221,12 +223,13 @@ def minmax(depth, alpha, beta, maximizing_player,board):
 
                 evaluation = minmax(depth + 1, alpha, beta, True,new_board_with_block )
                 if(worst_eval>evaluation):
+                    best_board = np.array(new_board_with_block)
                     worst_eval=evaluation
                 beta = min(beta, worst_eval)
                 if beta <= alpha:
                     break # Alpha cut-off
             if beta < alpha:
                 break
-        minmax_board = np.array(new_board_with_block)
+        minmax_board=best_board
         return worst_eval
 
