@@ -125,9 +125,6 @@ Liste des variables heuristiques:
 """
 
 def evaluate_board(board,PLAYER_TYPE):
-    # Simple heuristic: count the number of empty cells
-    #empty_cells = sum(row.count(0) for row in board)
-    #return empty_cells
     """
     Test fonction d'evaluation
     --> on essaie d'entourer l'adversaire le plus rapidement
@@ -136,26 +133,24 @@ def evaluate_board(board,PLAYER_TYPE):
     """
     player_pos = np.where(board == PLAYER_TYPE)
     player_pos = [player_pos[0][0], player_pos[1][0]]
-
     manthann_distance=abs(3-player_pos[0])+abs(3-player_pos[1])
 
     if(PLAYER_TYPE==IA_CASE):
         # retourne le nombre de case autour du joueur
-        around_adversary_value = check_cell_around(board,JOUEUR_CASE)
+        around_adversary = check_cell_around(board,JOUEUR_CASE)
         around_player = check_cell_around(board,IA_CASE)
 
     else:
-        around_adversary_value = check_cell_around(board,IA_CASE)
+        around_adversary = check_cell_around(board,IA_CASE)
         around_player = check_cell_around(board,JOUEUR_CASE)
 
-    return 100 * around_adversary_value - 200 * around_player - 35*manthann_distance
+    # ---->                        nmbr cell        nmbrl cell
+    return 100-manthann_distance+(8-around_player)-(8-around_adversary)
+    #return 100 * around_adversary_value - 200 * around_player - 35*manthann_distance
     #return (around_player-3*around_adversary_value)*np.sum(np.where(board==FREE_CASE))
-
-
 
 def minmax(depth, alpha, beta, maximizing_player,board):
     global minmax_board
-
     """
     :param node: noeud racine
     :param depth: profondeur
@@ -164,8 +159,7 @@ def minmax(depth, alpha, beta, maximizing_player,board):
     :param maximizing_player: est ce qu'on maximise ?
     :return:
     """
-    #new_board_with_block=[]
-    #new_board=[]
+    ## permet de sauvegarder le meilleur tableau possible, évite de dépendre de ma classe Node !!!
     best_board=np.array(board)
     ### Cas 1: Profondeur==0 --> recursion finale, retour de la pile
     if(depth == DEPTH_MAX):
@@ -190,7 +184,6 @@ def minmax(depth, alpha, beta, maximizing_player,board):
             new_board = make_move(board, moves[move], IA_CASE)
             # On prend un wall_case pour l'associer au mouvement
             for block in blocks_list:
-                new_board_with_block = np.array(new_board)
                 new_board_with_block = place_block(new_board, block)
 
                 evaluation = minmax(depth + 1, alpha, beta, False,new_board_with_block)
@@ -201,10 +194,9 @@ def minmax(depth, alpha, beta, maximizing_player,board):
                 alpha = max(alpha, best_eval)
                 #optimisation alpha beta
                 if beta < alpha:
-                    break # Alpha cut-off
-            if beta <= alpha:
-                break
-        minmax_board=best_board
+                    minmax_board = best_board
+                    return best_eval
+        minmax_board = best_board
         return best_eval
     else:
         ### Cas 3:Minimiser --->
@@ -218,18 +210,17 @@ def minmax(depth, alpha, beta, maximizing_player,board):
             blocks_list=blocks[move]
             new_board = make_move(board, moves[move],JOUEUR_CASE)
             for block in blocks_list:
-                new_board_with_block = np.array(new_board)
                 new_board_with_block = place_block(new_board, block)
 
                 evaluation = minmax(depth + 1, alpha, beta, True,new_board_with_block )
+
                 if(worst_eval>evaluation):
                     best_board = np.array(new_board_with_block)
                     worst_eval=evaluation
                 beta = min(beta, worst_eval)
                 if beta <= alpha:
-                    break # Alpha cut-off
-            if beta < alpha:
-                break
-        minmax_board=best_board
+                    minmax_board = best_board
+                    return worst_eval
+        minmax_board = best_board
         return worst_eval
 
