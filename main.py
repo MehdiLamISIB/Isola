@@ -63,8 +63,8 @@ def move_player():
     while(not position_accepted):
         # permet de transformer [[1],[1]] en [1,2]
         player_pos = np.array(np.where(board == JOUEUR_CASE)).reshape((2, 1))
-        player_pos=[player_pos[0][0],player_pos[1][0]]
-        print("Votre position actuelle ({1},{0})".format(player_pos[0]+1,player_pos[1]+1))
+        player_pos=[player_pos[0][0]+1,player_pos[1][0]+1]
+        print("Votre position actuelle ({1},{0})".format(player_pos[0],player_pos[1]))
         move_choose = str(input("choix x,y --> "))
         coord = list(move_choose.split(','))
         # pour la position on doit :
@@ -74,27 +74,34 @@ def move_player():
         # - a la fin verifier si prochaine position est un mur ou IA, pour éviter des soucis
         if(coord[0].isdigit() and coord[1].isdigit()):
             coord=[int(coord[1]),int(coord[0])]
+            if(coord[0]>7 or coord[0]<1):
+                print("Case x en dehors du plateau !!!!")
+                continue
+            if(coord[1]>7 or coord[1]<1):
+                print("Case y en dehors du plateau !!!!")
+                continue
+            print("cooord ---> ",coord)
+            #print("player_pos --->", player_pos)
+            if(
+                    (not (coord[0]==player_pos[0] and coord[1]==player_pos[1] ) )
+                and (
+                    (coord[0] == (player_pos[0] - 1) or coord[0] == (player_pos[0] + 1) or coord[0]==player_pos[0] )
+                        or
+                    (coord[1] == (player_pos[1] - 1) or coord[1] == (player_pos[1] + 1) or coord[1]==player_pos[1] )
+                    )
+            ):
 
-            directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
-            pl_pos = [player_pos[0][0], player_pos[1][0]]
-            # On verifie si ces mouvements sont possibles, si oui on les rajoutes dans la listes des mouvements
-            # ici pour moves --> on a les coordonnées qui commence par 0 (0,0) est donc la position du corner supérieur gauche |
-            for pos in directions:
-                x = pos[1]
-                y = pos[0]
-                if ((pl_pos[1] + x < 0) or (pl_pos[1] + x > 6) or (pl_pos[0] + y < 0) or (pl_pos[0] + y > 6)):
+                if(board[coord[0]-1][coord[1]-1]==IA_CASE or board[coord[0]-1][coord[1]-1]==WALL_CASE):
+                    print("Position occupé !!!!!")
                     continue
-                if (board[pl_pos[0] + y][pl_pos[1] + x] != FREE_CASE):
-                    continue
-
-            if(board[coord[0]-1][coord[1]-1]==IA_CASE or board[coord[0]-1][coord[1]-1]==WALL_CASE):
-                print("Position occupé !!!!!")
+                board[coord[0]-1][coord[1]-1]=JOUEUR_CASE
+                board[player_pos[0]-1][player_pos[1]-1]=FREE_CASE
+                position_accepted=True
+                continue
+            else:
+                print("Choisi les bonnes cases !!!!")
                 continue
 
-            board[coord[0]-1][coord[1]-1]=JOUEUR_CASE
-            board[player_pos[0]-1][player_pos[1]-1]=FREE_CASE
-            position_accepted=True
-            continue
         else:
             print("Mets des chiffres !!!!!!")
             continue
