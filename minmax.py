@@ -5,10 +5,14 @@ JOUEUR_CASE=1
 IA_CASE=2
 WALL_CASE=-1
 
-DEPTH_MAX=1
+DEPTH_MAX=2
 
 board_old=[]
 minmax_board=[]
+
+
+
+
 
 class Node():
     def __init__(self, value):
@@ -148,12 +152,10 @@ def evaluate_board(board,PLAYER_TYPE):
     #return (around_player-3*around_adversary_value)*np.sum(np.where(board==FREE_CASE))
 
 
-counter_val=0
 
 def minmax(depth, alpha, beta, maximizing_player,board):
-    global minmax_board,counter_val
-    #print(depth, counter_val)
-    counter_val=counter_val+1
+    global minmax_board
+
     """
     :param node: noeud racine
     :param depth: profondeur
@@ -172,12 +174,12 @@ def minmax(depth, alpha, beta, maximizing_player,board):
         else:
             value=evaluate_board(np.array(board),JOUEUR_CASE)
         return value
-    ### Cas 2: Maximiser --->
-    """
-    L'algoritme itere tous les cas possible
-    pour maximiser l'IA
-    """
-    if(maximizing_player):
+    elif(maximizing_player):
+        """
+        L'algoritme itere tous les cas possible
+        pour maximiser l'IA
+        """
+        ### Cas 2: Maximiser --->
         best_eval = float('-inf')
         moves, blocks = generate_moves_and_blocks(board,IA_CASE)
         # D'abord le joueur bouge, ce qui crée un nouveau plateau pour bloquer ensuite
@@ -193,17 +195,15 @@ def minmax(depth, alpha, beta, maximizing_player,board):
                 evaluation = minmax(depth + 1, alpha, beta, False,new_board_with_block)
                 #best_eval = max(best_eval, evaluation)
                 if(best_eval<evaluation):
-                    best_eval=evaluation
                     minmax_board = np.array(new_board_with_block)
+                    best_eval=evaluation
                 alpha = max(alpha, best_eval)
                 #optimisation alpha beta
-                if beta <= alpha:
+                if beta < alpha:
                     break # Alpha cut-off
             if beta <= alpha:
                 break
-
         return best_eval
-
     else:
         ### Cas 3:Minimiser --->
         """
@@ -220,11 +220,12 @@ def minmax(depth, alpha, beta, maximizing_player,board):
                 new_board_with_block = place_block(new_board, block)
 
                 evaluation = minmax(depth + 1, alpha, beta, True,new_board_with_block )
-                worst_eval = min(worst_eval, evaluation)
+                if(worst_eval>evaluation):
+                    worst_eval=evaluation
                 beta = min(beta, worst_eval)
                 if beta <= alpha:
                     break # Alpha cut-off
-            if beta <= alpha:
+            if beta < alpha:
                 break
         minmax_board = np.array(new_board_with_block)
         return worst_eval
