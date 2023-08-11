@@ -1,27 +1,32 @@
+import pygame
 import numpy as np
 import minmax as minmax
-"""
-Le déroulement du jeu se passe ainsi :
-    - D'abord le joueur bouge et pose un block
-    - Ensuite le joueur IA prend la meilleur option (minmax) et pose un block
-"""
+# Initialize Pygame
+pygame.init()
 
-"""
-Valeur heuristique
-    - Distance par rapport à l'opposant : distance Manhattan
-    - Controle du centre du plateau : Valeur élévé pour les case proche du centre du plateau
-    - Isolation de l'opposant : Positif si une case près de l'opposant est bloqué
-    - 
-"""
+# Constants for board size and cell size
+BOARD_SIZE = 7
+CELL_SIZE = 80
+SCREEN_SIZE = BOARD_SIZE * CELL_SIZE
 
+# Colors
+WHITE = (255, 255, 255)
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
+BLACK =(0,0,0)
+# Create the screen
+screen = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
+pygame.display.set_caption("Isola Game")
+
+# Create the game board as a 2D numpy array
+#board = np.zeros((BOARD_SIZE, BOARD_SIZE))
 ## variable global
 FREE_CASE=0
 JOUEUR_CASE=1
 IA_CASE=2
 WALL_CASE=-1
 WINNER_GAME=0
-
-board= np.array( [
+board=np.array( [
     [FREE_CASE,FREE_CASE,IA_CASE,FREE_CASE,FREE_CASE,FREE_CASE,FREE_CASE],
     [FREE_CASE, FREE_CASE, FREE_CASE, FREE_CASE, FREE_CASE, FREE_CASE, FREE_CASE],
     [FREE_CASE, FREE_CASE, FREE_CASE, FREE_CASE, FREE_CASE, FREE_CASE, FREE_CASE],
@@ -34,70 +39,33 @@ board= np.array( [
 
 
 
+# Initial positions for player and AI
+#player_position = (0, 2)
+#ai_position = (6, 4)
+#board[player_position] = 1
+#board[ai_position] = 2
 
-
-
-
-
-
-
-
-def show_board():
+def move_player(move):
     global board
-    print(" ",end="")
-    print("-"*21)
-    for a in board:
-        for i in a:
-            print("{}".format(i).rjust(3), end="")
-        print(end="\n")
-    print(" ", end="")
-    print("-" * 21)
 
-def move_player():
-    position_accepted = False
-    print("******************************",end='')
-    print("| Phase choix de la position |",end='')
-    print("******************************")
-    while(not position_accepted):
-        # permet de transformer [[1],[1]] en [1,2]
-        player_pos = np.array(np.where(board == JOUEUR_CASE)).reshape((2, 1))
-        player_pos=[player_pos[0][0],player_pos[1][0]]
-        print("Votre position actuelle ({0},{1}) ---- ".format(player_pos[0],player_pos[1]),end='')
-        move_choose = str(input("choix y,x --> "))
-        coord = list(move_choose.split(','))
-        # pour la position on doit :
-        # - verifier si entier
-        # - verifier si position même que avant
-        # - verifier si position autour
-        # - a la fin verifier si prochaine position est un mur ou IA, pour éviter des soucis
-        if(coord[0].isdigit() and coord[1].isdigit()):
-            coord=[int(coord[0]),int(coord[1])]
-            if(coord[0]>7 or coord[0]<0):
-                print("Case x en dehors du plateau !!!!")
-                continue
-            if(coord[1]>7 or coord[1]<0):
-                print("Case y en dehors du plateau !!!!")
-                continue
-            #print("cooord ---> ",coord)
-            directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
-            coord_tuple=(coord[0]-player_pos[0],coord[1]-player_pos[1])
-            #print("le coord tuple ---> ",coord_tuple)
-            if( coord_tuple in directions):
-                if(board[coord[0]][coord[1]]!=FREE_CASE):
-                    print("Position occupé !!!!!")
-                    continue
-                board[coord[0]][coord[1]]=JOUEUR_CASE
-                board[player_pos[0]][player_pos[1]]=FREE_CASE
-                position_accepted=True
-                continue
-            else:
-                print("Choisi les bonnes cases !!!!")
-                continue
+    # Get the current position of the player
+    player_pos = np.array(np.where(board == JOUEUR_CASE))
+    player_pos = [player_pos[0][0], player_pos[1][0]]
 
-        else:
-            print("Mets des chiffres !!!!!!")
-            continue
-    ## position choisi maintenat on peut poser le mur
+    # Calculate the new position after the move
+    new_pos = [ move[0], move[1]]
+    # Check if the new position is within the board boundaries
+    if 0 <= new_pos[0] < 7 and 0 <= new_pos[1] < 7:
+        if( (new_pos[0]-player_pos[0],new_pos[1]-player_pos[1]) in [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]):
+            # Check if the new position is a valid move (an empty cell)
+            if board[new_pos[0]][new_pos[1]] == FREE_CASE:
+                # Update the board with the new player position
+                board[player_pos[0]][player_pos[1]] = FREE_CASE
+                board[new_pos[0]][new_pos[1]] = JOUEUR_CASE
+                # Toggle the current player
+                return True  # Move was successful
+    return False  # Move was invalid
+
 def block_player():
     position_accepted = False
     print("******************************",end='')
@@ -182,42 +150,85 @@ def check_winner(PLAYER_TYPE):
                  board[y+1][x-1]+ board[y+1][x]+ board[y+1][x+1] )==-8
 
 
-def isola_game():
-    global board,WINNER_GAME
-    while(True):
-        ## D'abord je montre le plateau
-        show_board()
-        # Ensuite le joueur doit choisir les cases et poser le mur
-        Player_turn()
-        # Ensuite une évaluation des condition de réussite sont faite
-
-        if(check_winner(IA_CASE)):
-            print("\n"*10)
-            print("Bien joué, tu as gagné contre l'IA")
-            WINNER_GAME=JOUEUR_CASE
-            break
-        # Ensuite le joueur IA doit choisir les cases et poser le mur
-        Ia_turn()
-        # Ensuite une évaluation des condition de réussite sont faite
-        if(check_winner(JOUEUR_CASE)):
-            print("\n"*10)
-            print("Tu as perdu contre l'IA")
-            WINNER_GAME=IA_CASE
-            break
-
-#show_board()
 
 
 
 
-"""
-Game is running but issue with WALL_CASE of IA not showing up on the game table
-"""
-isola_game()
+#GAME LOOP
+#GAME LOOP
+#GAME LOOP
+#GAME LOOP
+#GAME LOOP
+#GAME LOOP
+#GAME LOOP
+#GAME LOOP
+#GAME LOOP
+#GAME LOOP
+
+# Game loop
+
+# Function to get the cell position based on the mouse click
+def get_clicked_cell(mouse_pos):
+    row = mouse_pos[1] // CELL_SIZE
+    col = mouse_pos[0] // CELL_SIZE
+    return row, col
+
+
+running = True
+clock = pygame.time.Clock()
+
+
+
+MOVE_PLAYER=1
+BLOCK_PLAYER=1
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button clicked
+            clicked_row, clicked_col = get_clicked_cell(event.pos)
+            print("Clicked on cell:", clicked_row, clicked_col)
+            print("peut bouger", move_player([int(clicked_row), int(clicked_col)]))
+
+
+            #if(MOVE_PLAYER):
+            #    BLOCK_PLAYER=1
+            #    MOVE_PLAYER=0
+            #    print("MOVE")
+            #    break
+            #if(BLOCK_PLAYER):
+            #    print("BLOCk")
+            #    BLOCK_PLAYER=0
+            #    break
+
+            """
+            C'est ici que pygame demarre une instance d'un tour Joueur-IA
+            """
 
 
 
 
-#empty_cells=np.array(np.where(board == FREE_CASE))
-#empty_cells=[ [empty_cells[0][i],empty_cells[1][i]] for i in range(len(empty_cells[0]))]
-#print(empty_cells)
+
+    screen.fill(WHITE)
+    # Draw the board
+    for row in range(BOARD_SIZE):
+        for col in range(BOARD_SIZE):
+            # le tableau est parcouru le long des x [---->]
+            x = col * CELL_SIZE
+            y = row * CELL_SIZE
+            pygame.draw.rect(screen, WHITE, (x, y, CELL_SIZE, CELL_SIZE))
+            pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE), 1)  # Add this line to draw the grid
+            #pygame.draw.rect(screen, WHITE, (x, y, CELL_SIZE, CELL_SIZE))
+            if board[row, col] == JOUEUR_CASE:  # Player
+                pygame.draw.circle(screen, BLUE, (x + CELL_SIZE // 2, y + CELL_SIZE // 2), CELL_SIZE // 2 - 10)
+            elif board[row, col] == IA_CASE:  # AI
+                pygame.draw.circle(screen, RED, (x + CELL_SIZE // 2, y + CELL_SIZE // 2), CELL_SIZE // 2 - 10)
+
+    pygame.display.flip()
+
+
+    clock.tick(60)
+
+
+pygame.quit()
