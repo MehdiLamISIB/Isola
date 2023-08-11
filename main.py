@@ -142,15 +142,9 @@ def Player_turn():
 
 def Ia_turn():
     global board
-
     minmax.board_old=np.array(board)
     #root=minmax.Node(0)
-
-
-
     minmax.minmax(depth=0, alpha=float('-inf'), beta=float('inf'), maximizing_player=True,board=minmax.board_old)
-
-
     board=minmax.minmax_board
 
 def check_winner(PLAYER_TYPE):

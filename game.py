@@ -66,47 +66,15 @@ def move_player(move):
                 return True  # Move was successful
     return False  # Move was invalid
 
-def block_player():
-    position_accepted = False
-    print("******************************",end='')
-    print("| Phase choix position du mur |",end='')
-    print("******************************")
-    while(not position_accepted):
-        # permet de transformer [[1],[1]] en [1,2]
-        player_pos = np.array(np.where(board == JOUEUR_CASE)).reshape((2, 1))
-        player_pos=[player_pos[0][0],player_pos[1][0]]
-        print("Votre position actuelle ({0},{1}) ---- ".format(player_pos[0],player_pos[1]),end='')
-        move_choose = str(input("choix y,x --> "))
-        coord = list(move_choose.split(','))
-        # pour la position on doit :
-        # - verifier si entier
-        # - verifier si prochaine position est un mur ou IA, pour éviter des soucis
-        if(coord[0].isdigit() and coord[1].isdigit()):
-            coord=[int(coord[0]),int(coord[1])]
-            #print("cooord ---> ",coord)
-            #print("player_pos --->", player_pos)
+def block_player(block):
+    global board
+    # Check if the clicked cell is a valid block position
+    if board[block[0]][block[1]] == FREE_CASE:
+        # Place the block in the clicked cell
+        board[block[0]][block[1]] = WALL_CASE
+        return True  # Block placement was successful
+    return False  # Block placement was invalid
 
-            if(coord[0]>7 or coord[0]<0):
-                print("Case x en dehors du plateau !!!!")
-                continue
-            if(coord[1]>7 or coord[1]<0):
-                print("Case y en dehors du plateau !!!!")
-                continue
-            if(board[coord[0]][coord[1]]==FREE_CASE):
-                board[coord[0]][coord[1]]=WALL_CASE
-                position_accepted=True
-                continue
-            else:
-                print("Position occupé !!!!")
-                continue
-        else:
-            print("Mets des chiffres !!!!!!")
-
-    ## position choisi maintenat on peut poser le mur
-
-def Player_turn():
-    move_player()
-    block_player()
 
 def Ia_turn():
     global board
@@ -178,29 +146,38 @@ running = True
 clock = pygame.time.Clock()
 
 
-
+## GAME STATUS
 MOVE_PLAYER=1
 BLOCK_PLAYER=1
+IA_TURN=0
 
 while running:
+    font = pygame.font.Font(None, 100)
+
+
+
+    if(IA_TURN==1 ):
+        minmax.board_old = np.array(board)
+        minmax.minmax(depth=0, alpha=float('-inf'), beta=float('inf'), maximizing_player=True, board=minmax.board_old)
+        board = minmax.minmax_board
+        IA_TURN=0
+        MOVE_PLAYER=1
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button clicked
             clicked_row, clicked_col = get_clicked_cell(event.pos)
             print("Clicked on cell:", clicked_row, clicked_col)
-            print("peut bouger", move_player([int(clicked_row), int(clicked_col)]))
-
-
-            #if(MOVE_PLAYER):
-            #    BLOCK_PLAYER=1
-            #    MOVE_PLAYER=0
-            #    print("MOVE")
-            #    break
-            #if(BLOCK_PLAYER):
-            #    print("BLOCk")
-            #    BLOCK_PLAYER=0
-            #    break
+            if(MOVE_PLAYER):
+                if( move_player([int(clicked_row), int(clicked_col)]) ):
+                    BLOCK_PLAYER=1
+                    MOVE_PLAYER=0
+                break
+            if(BLOCK_PLAYER):
+                if( block_player([int(clicked_row), int(clicked_col)]) ):
+                    BLOCK_PLAYER=0
+                    IA_TURN=1
+                    break
 
             """
             C'est ici que pygame demarre une instance d'un tour Joueur-IA
@@ -219,14 +196,18 @@ while running:
             y = row * CELL_SIZE
             pygame.draw.rect(screen, WHITE, (x, y, CELL_SIZE, CELL_SIZE))
             pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE), 1)  # Add this line to draw the grid
+            cell_rect = pygame.Rect(x , y , CELL_SIZE, CELL_SIZE)
             #pygame.draw.rect(screen, WHITE, (x, y, CELL_SIZE, CELL_SIZE))
             if board[row, col] == JOUEUR_CASE:  # Player
                 pygame.draw.circle(screen, BLUE, (x + CELL_SIZE // 2, y + CELL_SIZE // 2), CELL_SIZE // 2 - 10)
             elif board[row, col] == IA_CASE:  # AI
                 pygame.draw.circle(screen, RED, (x + CELL_SIZE // 2, y + CELL_SIZE // 2), CELL_SIZE // 2 - 10)
+            elif board[row, col] == WALL_CASE:
 
+                pygame.draw.rect(screen, BLACK, cell_rect)
+
+    #screen.blit(font.render("IA win !!", True, BLUE), (10, 240))
     pygame.display.flip()
-
 
     clock.tick(60)
 

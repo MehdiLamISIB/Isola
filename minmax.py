@@ -5,7 +5,7 @@ JOUEUR_CASE=1
 IA_CASE=2
 WALL_CASE=-1
 
-DEPTH_MAX=3
+DEPTH_MAX=2
 
 board_old=[]
 minmax_board=[]
