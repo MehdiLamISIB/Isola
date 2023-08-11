@@ -168,6 +168,9 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button clicked
             clicked_row, clicked_col = get_clicked_cell(event.pos)
             print("Clicked on cell:", clicked_row, clicked_col)
+            if(WINNER!=0):
+                running=False
+                break
             if(MOVE_PLAYER):
                 if( move_player([int(clicked_row), int(clicked_col)]) ):
                     BLOCK_PLAYER=1
@@ -209,6 +212,10 @@ while running:
                 pygame.draw.rect(screen, BLACK, cell_rect)
 
     #screen.blit(font.render("IA win !!", True, BLUE), (10, 240))
+    if(WINNER==IA_CASE):
+        screen.blit(font.render("IA win !!", True, BLUE), (10, 240))
+    if(WINNER==JOUEUR_CASE):
+        screen.blit(font.render("Joueur win !!", True, BLUE), (10, 240))
     pygame.display.flip()
 
     clock.tick(60)
