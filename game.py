@@ -98,7 +98,7 @@ def check_winner(PLAYER_TYPE):
     if(x==0 and y==0):
         return ( board[y+1][x]+ board[y+1][x+1]+ board[y][x+1]  )==-3
     elif (x == 6 and y == 0):
-        return ( board[y+1][x]+ board[y+1][x+1]+ board[y][x+1]  )==-3
+        return ( board[y+1][x]+ board[y+1][x-1]+ board[y][x-1]  )==-3
     elif (x == 0 and y == 6):
         return ( board[y-1][x]+board[y-1][x+1] + board[y][x+1]  )==-3
     elif (x == 6 and y == 6):
@@ -159,15 +159,17 @@ while running:
         board = minmax.minmax_board
         IA_TURN=0
         MOVE_PLAYER=1
-        if(check_winner(JOUEUR_CASE)):
-            WINNER=IA_CASE
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button clicked
             clicked_row, clicked_col = get_clicked_cell(event.pos)
             print("Clicked on cell:", clicked_row, clicked_col)
+            """
+            Permet d'interpeter chaque clic de façon séquentielle
+            Si Quelqu'un a gagner, quitte application
+            Joueur bouge --> joueur bloque
+            """
             if(WINNER!=0):
                 running=False
                 break
@@ -180,8 +182,6 @@ while running:
                 if( block_player([int(clicked_row), int(clicked_col)]) ):
                     BLOCK_PLAYER=0
                     IA_TURN=1
-                    if (check_winner(IA_CASE)):
-                        WINNER = JOUEUR_CASE
                     break
 
             """
@@ -190,7 +190,10 @@ while running:
 
 
 
-
+    if(check_winner(JOUEUR_CASE)):
+        WINNER=IA_CASE
+    if (check_winner(IA_CASE)):
+        WINNER = JOUEUR_CASE
 
     screen.fill(WHITE)
     # Draw the board
@@ -213,9 +216,9 @@ while running:
 
     #screen.blit(font.render("IA win !!", True, BLUE), (10, 240))
     if(WINNER==IA_CASE):
-        screen.blit(font.render("IA win !!", True, BLUE), (10, 240))
+        screen.blit(font.render("IA win !!", True, (0,255,0)), (10, 240))
     if(WINNER==JOUEUR_CASE):
-        screen.blit(font.render("Joueur win !!", True, BLUE), (10, 240))
+        screen.blit(font.render("Joueur win !!", True, (0,255,0)), (10, 240))
     pygame.display.flip()
 
     clock.tick(60)

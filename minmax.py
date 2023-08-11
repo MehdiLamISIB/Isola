@@ -27,7 +27,7 @@ class Node():
         self.child_count=len(self.child_nodes)
 
 ### Fonction peut être utiliser pour Joueur et IA
-def check_cell_around(board,PLAYER_TYPE):
+def check_block_around(board,PLAYER_TYPE):
     pl_pos = np.array(np.where(board == PLAYER_TYPE))
     pl_pos = [pl_pos[1][0] , pl_pos[0][0] ]
     x=pl_pos[0]
@@ -38,7 +38,7 @@ def check_cell_around(board,PLAYER_TYPE):
         #Max -3
         return abs(board[y+1][x]+ board[y+1][x+1]+ board[y][x+1])
     elif (x == 6 and y == 0):
-        return abs( board[y+1][x]+ board[y+1][x+1]+ board[y][x+1]  )
+        return abs( board[y+1][x]+ board[y+1][x-1]+ board[y][x-1]  )
     elif (x == 0 and y == 6):
         return abs( board[y-1][x]+board[y-1][x+1] + board[y][x+1]  )
     elif (x == 6 and y == 6):
@@ -57,6 +57,22 @@ def check_cell_around(board,PLAYER_TYPE):
         return abs( board[y-1][x-1]+board[y-1][x]+board[y-1][x+1] +
                  board[y][x-1]+board[y][x+1] +
                  board[y+1][x-1]+ board[y+1][x]+ board[y+1][x+1] )
+
+def check_move_around(board,PLAYER_TYPE):
+    moves = []
+    directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
+    pl_pos = np.array(np.where(board == PLAYER_TYPE))
+    pl_pos = [pl_pos[0][0], pl_pos[1][0]]
+    count_move=0
+    for pos in directions:
+        x = pos[1]
+        y = pos[0]
+        if ( (pl_pos[1] + x < 0) or (pl_pos[1] + x > 6) or (pl_pos[0] + y < 0) or (pl_pos[0] + y > 6) ):
+            continue
+        if(board[pl_pos[0] + y][pl_pos[1] + x]!=FREE_CASE):
+            continue
+        count_move=count_move+1
+    return count_move
 
 def make_move(board,move,PLAYER_TYPE):
     move_board = np.array(board)#np.array( np.where(board == PLAYER_TYPE, FREE_CASE, board) )
@@ -137,17 +153,28 @@ def evaluate_board(board,PLAYER_TYPE):
 
     if(PLAYER_TYPE==IA_CASE):
         # retourne le nombre de case autour du joueur
-        around_adversary = check_cell_around(board,JOUEUR_CASE)
-        around_player = check_cell_around(board,IA_CASE)
-
+        block_adversary = check_block_around(board,JOUEUR_CASE)
+        move_adversary=check_move_around(board,JOUEUR_CASE)
+        block_player = check_block_around(board,IA_CASE)
+        move_player=check_move_around(board,IA_CASE)
     else:
-        around_adversary = check_cell_around(board,IA_CASE)
-        around_player = check_cell_around(board,JOUEUR_CASE)
+        block_adversary = check_block_around(board,IA_CASE)
+        move_adversary=check_move_around(board,IA_CASE)
+        block_player = check_block_around(board,JOUEUR_CASE)
+        move_player = check_move_around(board, JOUEUR_CASE)
 
-    # ---->                        nmbr cell        nmbrl cell
-    #return 50 - manthann_distance+(8-around_player) - (8-around_adversary)
-    return 100 * around_adversary - 200 * around_player - 35*manthann_distance
-    #return (around_player-3*around_adversary_value)*np.sum(np.where(board==FREE_CASE))
+    # On veut :
+    # Maximiser
+    # --> les blocs autour de l'adversaire
+    # --> l'espace libre
+    # Minimiser
+    # --> les blocs autour du joueur
+    # --> les mouvements vers les coins
+    # --> les mouvements de l'adversaire
+
+
+    return 10*(block_adversary+move_player)-(manthann_distance+block_player+move_adversary)
+
 
 def minmax(depth, alpha, beta, maximizing_player,board):
     global minmax_board
@@ -164,7 +191,7 @@ def minmax(depth, alpha, beta, maximizing_player,board):
     ### Cas 1: Profondeur==0 --> recursion finale, retour de la pile
     if(depth == DEPTH_MAX):
         value=0
-        if(not maximizing_player):
+        if(maximizing_player):
             value=evaluate_board(np.array(board),IA_CASE)
         else:
             value=evaluate_board(np.array(board),JOUEUR_CASE)
