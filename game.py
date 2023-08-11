@@ -25,7 +25,6 @@ FREE_CASE=0
 JOUEUR_CASE=1
 IA_CASE=2
 WALL_CASE=-1
-WINNER_GAME=0
 board=np.array( [
     [FREE_CASE,FREE_CASE,IA_CASE,FREE_CASE,FREE_CASE,FREE_CASE,FREE_CASE],
     [FREE_CASE, FREE_CASE, FREE_CASE, FREE_CASE, FREE_CASE, FREE_CASE, FREE_CASE],
@@ -150,11 +149,9 @@ clock = pygame.time.Clock()
 MOVE_PLAYER=1
 BLOCK_PLAYER=1
 IA_TURN=0
-
+WINNER=0
 while running:
     font = pygame.font.Font(None, 100)
-
-
 
     if(IA_TURN==1 ):
         minmax.board_old = np.array(board)
@@ -162,6 +159,9 @@ while running:
         board = minmax.minmax_board
         IA_TURN=0
         MOVE_PLAYER=1
+        if(check_winner(JOUEUR_CASE)):
+            WINNER=IA_CASE
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -177,6 +177,8 @@ while running:
                 if( block_player([int(clicked_row), int(clicked_col)]) ):
                     BLOCK_PLAYER=0
                     IA_TURN=1
+                    if (check_winner(IA_CASE)):
+                        WINNER = JOUEUR_CASE
                     break
 
             """
