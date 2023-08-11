@@ -55,6 +55,7 @@ def show_board():
         print(end="\n")
     print(" ", end="")
     print("-" * 21)
+
 def move_player():
     position_accepted = False
     print("******************************",end='')
@@ -137,6 +138,7 @@ def block_player():
             print("Mets des chiffres !!!!!!")
 
     ## position choisi maintenat on peut poser le mur
+
 def Player_turn():
     move_player()
     block_player()
