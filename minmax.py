@@ -174,7 +174,9 @@ def evaluate_board(board,PLAYER_TYPE):
 
     #return 10*(block_adversary+move_player)-50*(manthann_distance+block_player+move_adversary)
     #return 100 - manhattan_distance+move_player - move_adversary
-    return move_player-move_adversary
+
+    #return move_player-move_adversary
+    return move_player-2*move_adversary
 def minmax(depth, alpha, beta, maximizing_player,board):
     global minmax_board
     """
@@ -241,11 +243,11 @@ def minmax(depth, alpha, beta, maximizing_player,board):
                 evaluation = minmax(depth + 1, alpha, beta, True,new_board_with_block )
 
                 if(worst_eval>evaluation):
-                    best_board = np.array(new_board_with_block)
+                    #best_board = np.array(new_board_with_block)
                     worst_eval=evaluation
                 beta = min(beta, worst_eval)
                 if beta <= alpha:
-                    minmax_board = best_board
+                    #minmax_board = best_board
                     return worst_eval
         minmax_board = best_board
         return worst_eval
