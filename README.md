@@ -10,5 +10,5 @@ The evaluation value is:
 ```python
     # move_player : the possible move of player
     # move_player : the possible move of adversary
-    return move_player-move_adversary
+    return move_player-2*move_adversary
 ```
